@@ -1,0 +1,56 @@
+[
+  {
+    "title": "Electricity",
+    "stat": "100–500 MW",
+    "statLabel": "per large campus",
+    "detail": "A single hyperscale data center draws as much power as 80,000–400,000 homes. AI workloads require 5–10× more power per rack than traditional cloud computing. This demand is straining regional grids and driving rate increases for all ratepayers.",
+    "source": "Lawrence Berkeley National Laboratory, 2024 Data Center Energy Report",
+    "pillar": "electricity-rates",
+    "icon": "zap"
+  },
+  {
+    "title": "Water",
+    "stat": "1–5M gal",
+    "statLabel": "per day (evaporative)",
+    "detail": "Evaporative cooling — the most common type — consumes 1–5 million gallons of water per day per large facility. In water-stressed regions like Arizona and Texas, this represents a significant draw on municipal and aquifer supplies.",
+    "source": "Pacific Institute, Water Use in Data Centers, 2023",
+    "pillar": "water-usage",
+    "icon": "droplet"
+  },
+  {
+    "title": "Noise",
+    "stat": "65–85 dB",
+    "statLabel": "at property line",
+    "detail": "Cooling equipment and diesel backup generators produce continuous noise at 65–85 dB at the property line — comparable to heavy traffic or a lawn mower. Noise attenuates with distance but rarely falls below 45 dB within 500 feet.",
+    "source": "EPA Noise Standards; industry acoustic studies, 2022–2024",
+    "pillar": "how-to-fight-playbook",
+    "icon": "volume"
+  },
+  {
+    "title": "Air Quality",
+    "stat": "20–100",
+    "statLabel": "diesel generators",
+    "detail": "Large facilities require 20–100 diesel backup generators for power redundancy. During testing (required monthly) and outages, these emit NOx, PM2.5, and CO. Facilities in environmental justice communities face disproportionate impact.",
+    "source": "EPA RICE NESHAP regulations; community air monitoring studies",
+    "pillar": "how-to-fight-playbook",
+    "icon": "wind"
+  },
+  {
+    "title": "Tax Abatements",
+    "stat": "10–20 years",
+    "statLabel": "typical PILOT term",
+    "detail": "Developers routinely negotiate Payment in Lieu of Taxes (PILOT) agreements that reduce or eliminate property taxes for 10–20 years. A 200 MW facility may receive $200–500M in foregone tax revenue — costs borne by other taxpayers and school districts.",
+    "source": "Good Jobs First, Subsidy Tracker; state economic development records",
+    "pillar": "jobs-and-incentives",
+    "icon": "landmark"
+  },
+  {
+    "title": "Property Values",
+    "stat": "3 of 4",
+    "statLabel": "sites lagged county growth",
+    "detail": "The evidence is thinner than either side admits. An Indiana analysis found home values near data centers grew more slowly than the surrounding county at 3 of 4 sites; a George Mason study of Northern Virginia found no town-wide decline. The credible concern is adjacency — noise, lighting, traffic, and transmission lines hitting the closest homes.",
+    "source": "Integra Realty Resources Indiana analysis (via WVPE, 2026); George Mason University Schar School, 2025",
+    "pillar": "property-values",
+    "icon": "home"
+  }
+]

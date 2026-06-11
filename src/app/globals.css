@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+  body {
+    @apply bg-white text-ink font-body antialiased;
+  }
+  /* Visible focus states everywhere — WCAG 2.4.7 */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+}
+
+@layer components {
+  /* Small-caps mono section label carried over from the previous site */
+  .section-label {
+    @apply font-mono text-xs uppercase tracking-[0.2em] text-accent mb-3;
+  }
+  .btn-primary {
+    @apply inline-block bg-primary text-white font-body font-semibold px-6 py-3 rounded-sm hover:bg-primary-dark transition-colors;
+  }
+  .btn-accent {
+    @apply inline-block bg-accent text-white font-body font-semibold px-6 py-3 rounded-sm hover:bg-accent-dark transition-colors;
+  }
+  .btn-outline {
+    @apply inline-block border border-primary text-primary font-body font-semibold px-6 py-3 rounded-sm hover:bg-primary/5 transition-colors;
+  }
+  .card {
+    @apply bg-white border border-[#CCCCCC] rounded-sm;
+  }
+  .input {
+    @apply w-full border border-[#CCCCCC] rounded-sm px-4 py-3 font-body text-sm text-ink placeholder:text-slate-400 focus:border-primary focus:outline-none;
+  }
+  .label {
+    @apply block font-body font-semibold text-sm text-ink mb-1;
+  }
+  /* Long-form article body (Learn section) */
+  .prose-nadc {
+    @apply font-body text-ink leading-relaxed;
+  }
+  .prose-nadc h2 {
+    @apply font-display text-3xl text-primary mt-10 mb-4;
+  }
+  .prose-nadc h3 {
+    @apply font-display text-2xl text-primary mt-8 mb-3;
+  }
+  .prose-nadc p {
+    @apply mb-4 text-[0.97rem] leading-relaxed text-slate-700;
+  }
+  .prose-nadc ul,
+  .prose-nadc ol {
+    @apply mb-4 pl-6 space-y-2 text-[0.97rem] text-slate-700;
+  }
+  .prose-nadc ul {
+    @apply list-disc;
+  }
+  .prose-nadc ol {
+    @apply list-decimal;
+  }
+  .prose-nadc a {
+    @apply text-primary underline underline-offset-2 break-words hover:text-primary-dark;
+  }
+  .prose-nadc strong {
+    @apply font-semibold text-ink;
+  }
+  .prose-nadc blockquote {
+    @apply border-l-4 border-primary/30 pl-4 italic text-slate-600 my-4;
+  }
+}
