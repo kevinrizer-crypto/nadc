@@ -1,7 +1,12 @@
 # NADC — MVP Launch Plan & Phased Ramp-Up
 
-*Written in plain English. The goal: get a credible, working site live for $0/month,
-prove people care, then add money and muscle in phases as interest (and revenue) shows up.*
+*Written in plain English. The goal: get a credible, working site live for nearly
+nothing, prove people care, then add muscle in phases as interest (and revenue) shows up.*
+
+> **Update:** the LLC, bank account, and Stripe already exist — so donations
+> (the recurring "Neighbor" membership) move into the MVP launch. The only
+> Phase 1 cost this adds is honest hosting (see step 2): either $0 on Netlify
+> or $20/month on Vercel.
 
 ---
 
@@ -29,18 +34,23 @@ new site. The only money already spent is your domain renewals (~$25/year, sunk)
 | # | Step | What it is | Time | Cost |
 |---|------|-----------|------|------|
 | 1 | Create the database | Free account at supabase.com — this is where the tracker, tips, and subscribers live. Free tier: 500MB, plenty for years of this data. | 20 min | $0 |
-| 2 | Put the site online | Free account at vercel.com, connect it to your GitHub copy of this code. It auto-builds and gives you a live URL. | 30 min | $0 |
+| 2 | Put the site online | Connect a hosting account to your GitHub copy of this code; it auto-builds and gives you a live URL. Since donations will be on from day one, use a host whose free tier allows commercial use: **Netlify (free)** is the cheapest honest option; **Vercel Pro ($20/mo)** is the smoothest. Either works — your call. | 30 min | $0–20/mo |
 | 3 | Connect your domains through Cloudflare | Free Cloudflare account; point both domains there. This gives you security (DDoS protection, hiding your server), the automatic ".com → nadc.info" redirect, and free bot protection (Turnstile) for the forms. | 45 min | $0 |
 | 4 | Set up email sending | Free account at resend.com (3,000 emails/month free). This unlocks three things at once: newsletter signups (with the legally-required confirmation step), tip-line confirmation emails, and **your own admin login** (it emails you a sign-in link). | 30 min | $0 |
 | 5 | The credibility pass | Spend an afternoon in the admin panel: open each of the 30 tracker entries, click its source link, confirm the status is still right, hit "mark verified." This is the single most important launch task — the site's whole pitch is that it's verified. | 2–3 hrs | $0 |
-| 6 | Decide what to show | Recommended for MVP: keep **Home, Learn, Tracker, Organize, News, About** front and center. Donate and Store pages work but say "not live yet" at checkout — we can hide them from the menu until Phase 2 if you prefer (5-minute change, just say the word). | — | $0 |
+| 6 | Turn on donations | Connect the existing Stripe account (two keys: one secret key, plus a "webhook" key created after the site is live — 15 minutes total). The recurring "Neighbor" membership and one-time gifts go live, with Stripe taking ~3% per transaction and no monthly fee. The **Store** stays "not live yet" until Phase 2 — it still needs Printful setup and product photos; we can hide it from the menu until then if you prefer (5-minute change). | 30 min | ~3% per donation |
 | 7 | Soft launch | Submit the site to Google (free Search Console account), then start the organic playbook from your marketing strategy doc: share specific tracker pages in the Facebook groups, subreddits, and Nextdoor threads of towns with active fights. Lead with the local page, not the homepage — "here's everything documented about the [X] proposal, with sources." | ongoing | $0 |
 
 **What you skip in Phase 1 and why:**
-- **SMS/texting** — requires carrier registration that takes weeks, needs a legal entity, and has monthly fees. Zero benefit until you have an audience.
-- **Donations** — Stripe needs a legal entity and bank account. Also: asking for money before you've shown value undercuts the credibility positioning.
-- **Store** — Printful is free to set up but pointless without traffic.
+- **SMS/texting** — requires carrier registration that takes weeks and has monthly fees. Zero benefit until you have an audience. (You have the LLC it requires, so this can start anytime — but there's no rush.)
+- **Store** — Printful is free to set up but pointless without traffic, and it needs real product photos.
 - **Officials lookup** — actually free (Geocodio's free tier), so connect it whenever; it's a 10-minute, $0 step. Fine to do in Phase 1 if you want one more "wow" feature.
+
+**One launch judgment call on donations:** they're free to have on, but consider
+how loudly to feature them in week one. Leading your first social posts with the
+tracker ("here's everything documented about your town's proposal") builds the
+credibility that makes the donate ask land later. Having the page live but not
+promoted is a fine middle ground.
 
 **What "success" looks like before moving to Phase 2** (borrowed from your strategy doc):
 a few hundred email subscribers, tips arriving weekly, one or two tracker pages
@@ -49,28 +59,25 @@ journalist citing the site.
 
 ---
 
-## Phase 2 — Turn on the money (when interest is proven, ~months 2–4)
+## Phase 2 — Build the audience engine (when interest is proven, ~months 2–4)
 
-**Monthly cost: roughly $20–40/month + per-transaction fees.** Trigger: steady
-subscriber growth or a viral local fight.
+**Monthly cost: roughly $0–40/month.** Trigger: steady subscriber growth or a
+viral local fight. *(The legal entity, bank account, and Stripe — formerly this
+phase's main work — already exist and moved into Phase 1.)*
 
-1. **Form the legal entity** (one-time state filing fee, ~$50–300 depending on
-   state — this is the gate for everything money-related). An LLC is fastest;
-   convert to or file as a nonprofit later if you pursue 501(c) status. *Don't
-   claim tax-deductibility until it's real.*
-2. **Stripe donations** — free to set up; they take ~3% per transaction. The
-   recurring "Neighbor" membership flow is already built and is the priority
-   (predictable revenue, per your strategy doc). Soft-launch it to your most
-   engaged subscribers first.
-3. **Upgrade hosting** (~$20/month) — Vercel's free tier is for non-commercial
-   use; once donations are on, move to the paid plan. (This is also the honest
-   reading of their rules, which matters for an org whose brand is integrity.)
-4. **Start The Grid** — the weekly roundup email, written in the admin panel.
-   Email stays free until ~3,000 sends/month; at, say, 1,000+ subscribers
+1. **Push the recurring "Neighbor" ask** — the strategy doc's most important
+   move. Soft-launch the $10–25/month membership to your most engaged
+   subscribers first; one-time gifts are unpredictable, sustainers are a budget.
+2. **Start The Grid** — the weekly roundup email, written in the admin panel.
+   Email stays free until ~3,000 sends/month; at roughly 1,000+ subscribers
    weekly you'll graduate to Resend's ~$20/month tier. A good problem.
-5. **First petitions** — launch one or two tied to the hottest tracked fights
+3. **First petitions** — launch one or two tied to the hottest tracked fights
    (already built; takes minutes in admin).
-6. **Officials lookup** if not already on (free).
+4. **Officials lookup** if not already on (free).
+5. **Note on taxes:** an LLC's donations are not tax-deductible to donors. The
+   site doesn't claim they are. If you later want deductibility, that's a
+   501(c)(3)/(c)(4) decision with a lawyer — worth it only once donation volume
+   says so.
 
 **Revenue math to keep in mind:** 150 monthly "Neighbors" at $15 ≈ $2,250/month —
 which pays for every tool in Phase 2 and 3 roughly twenty times over. The
@@ -122,8 +129,8 @@ projects, not account setups. Prioritize by what users actually ask for:
 
 | Phase | Monthly cost | One-time | What you get |
 |-------|-------------|----------|--------------|
-| 1 — MVP | **$0** | $0 | Live site: tracker, content, tips, email list, security |
-| 2 — Money | ~$20–40 + ~3% of donations | entity filing $50–300 | Donations (recurring-first), weekly newsletter, petitions |
+| 1 — MVP | **$0–20** (+ ~3% per donation) | $0 | Live site: tracker, content, tips, email list, donations, security |
+| 2 — Audience | ~$0–40 | — | Recurring "Neighbor" push, weekly newsletter, petitions |
 | 3 — Scale | ~$50–100 | — | Store, SMS alerts, paid acquisition tests |
 | 4 — Product | depends | — | Estimator, case-study library, group network, automation |
 
@@ -136,9 +143,20 @@ systematizes it, paid scales it.
 
 ## What I'd need from you to execute Phase 1
 
-Just the account signups (steps 1–4 above use your email/identity, so I can't
-create them for you). Once you hand me the four credentials (database, Vercel,
-Cloudflare, Resend), wiring them in and deploying is about an hour of work, and
-the verification pass in the admin panel is yours whenever you have an
-afternoon. If you want the Store/Donate links hidden from the menu until
-Phase 2, say so and I'll add that switch.
+The account signups use your email/identity, so I can't create them for you.
+The full credential list, in the order I'd use them:
+
+1. **Database** — Supabase (or Neon) connection string.
+2. **Hosting** — Netlify or Vercel account connected to the GitHub repo (or
+   invite me as a collaborator).
+3. **Cloudflare** — account with both domains added (I'll talk you through the
+   nameserver switch), plus the two Turnstile keys it generates.
+4. **Resend** — API key, after adding the domain it asks you to verify.
+5. **Stripe** — the *secret key* from your existing account (Developers → API
+   keys). The webhook key comes after the site is live (it needs the real
+   address) — I'll tell you exactly where to click, ~10 minutes.
+
+With those in hand: wiring and deploying is about an hour on my end, then the
+30-entry verification pass in the admin panel is yours whenever you have an
+afternoon. If you want the Store link hidden from the menu until Phase 3, say
+so and I'll add that switch.
