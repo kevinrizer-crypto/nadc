@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getPublishedProjects } from "@/lib/queries";
 import TrackerExplorer from "@/components/TrackerExplorer";
 
@@ -44,7 +45,17 @@ export default async function TrackerPage() {
           </p>
         </div>
       ) : (
-        <TrackerExplorer projects={projects.map(toClientProject)} />
+        // Suspense is required because TrackerExplorer reads URL search params
+        // (?q=, ?state=) — without it, prerendering this page fails.
+        <Suspense
+          fallback={
+            <div className="h-[420px] card flex items-center justify-center" role="status">
+              <p className="font-mono text-xs text-slate-400">Loading tracker…</p>
+            </div>
+          }
+        >
+          <TrackerExplorer projects={projects.map(toClientProject)} />
+        </Suspense>
       )}
     </div>
   );
