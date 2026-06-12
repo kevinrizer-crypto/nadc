@@ -1,0 +1,34 @@
+[
+  {
+    "term": "Megawatt (MW)",
+    "def": "A unit of power equal to one million watts. A 100 MW data center draws as much electricity as approximately 80,000 average U.S. homes."
+  },
+  {
+    "term": "Substation",
+    "def": "Electrical infrastructure that steps down high-voltage transmission power to usable levels. Large data centers require dedicated substations, often funded by ratepayers."
+  },
+  {
+    "term": "Evaporative Cooling",
+    "def": "A cooling method that uses water evaporation to remove heat. Highly water-intensive — a large facility may consume 1–5 million gallons per day."
+  },
+  {
+    "term": "PILOT Agreement",
+    "def": "Payment in Lieu of Taxes. A negotiated arrangement where a developer pays a reduced, fixed amount instead of standard property taxes — often locking in decades of reduced revenue for schools and services."
+  },
+  {
+    "term": "By-Right Zoning",
+    "def": "A zoning classification that permits a use without requiring a public hearing or discretionary approval. Data centers are often permitted by-right in industrial zones, removing the public's chance to weigh in."
+  },
+  {
+    "term": "PUE (Power Usage Effectiveness)",
+    "def": "A ratio measuring how efficiently a data center uses energy. A PUE of 1.0 is perfect; industry average is 1.5–1.6, meaning 50–60% overhead energy beyond computing."
+  },
+  {
+    "term": "REC (Renewable Energy Certificate)",
+    "def": "A tradeable certificate representing one MWh of renewable electricity generation. Purchasing RECs does not mean a facility runs on renewable power — it offsets on paper only."
+  },
+  {
+    "term": "Hyperscale",
+    "def": "Data centers exceeding 100 MW and typically 100,000+ square feet, operated by or for major cloud providers (AWS, Azure, Google, Meta, etc.)."
+  }
+]

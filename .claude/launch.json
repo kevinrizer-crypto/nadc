@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "nadc-dev",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["next", "dev", "-p", "3100"],
+      "port": 3100,
+      "env": {
+        "DATABASE_URL": "postgres://127.0.0.1:5544/postgres",
+        "DATABASE_POOL_MAX": "1",
+        "AUTH_SECRET": "dev-secret-for-local-testing-only",
+        "IP_HASH_SALT": "devsalt",
+        "NEXT_PUBLIC_SITE_URL": "http://localhost:3100"
+      }
+    }
+  ]
+}

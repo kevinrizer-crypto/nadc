@@ -1,0 +1,26 @@
+[
+  {
+    "q": "Don't data centers create thousands of jobs?",
+    "a": "Industry routinely cites construction jobs (temporary, often non-local) alongside permanent operational roles. A 200 MW facility typically employs 50–150 permanent workers — not the 400–1,000 figures in press releases. Independent economic analyses consistently find that data centers produce far fewer permanent local jobs per dollar of public subsidy than comparable industrial investments.",
+    "source": "Good Jobs First, \"Data Center Subsidies,\" 2023; Economic Policy Institute",
+    "pillar": "jobs-and-incentives"
+  },
+  {
+    "q": "Don't data centers generate significant tax revenue?",
+    "a": "Only if they pay taxes. The majority of large data centers in the U.S. operate under multi-decade tax abatement agreements that eliminate or dramatically reduce property tax obligations. The net fiscal impact — accounting for infrastructure costs, utility upgrades, and foregone revenue — is often negative for host communities.",
+    "source": "Good Jobs First Subsidy Tracker; Virginia Joint Legislative Audit and Review Commission, 2023",
+    "pillar": "jobs-and-incentives"
+  },
+  {
+    "q": "Aren't modern data centers green and sustainable?",
+    "a": "Industry \"100% renewable energy\" claims typically refer to Renewable Energy Certificate (REC) purchases, not actual on-site generation or grid-matched consumption. The physical electricity draw still strains local grids, often requiring new fossil-fuel peaker plants. Water consumption for cooling is not offset by renewable energy purchases.",
+    "source": "Rocky Mountain Institute, \"Data Center Decarbonization,\" 2024; EPA REC guidance",
+    "pillar": "electricity-rates"
+  },
+  {
+    "q": "Isn't this just a warehouse or industrial building?",
+    "a": "Data centers are routinely permitted as \"warehouses\" or \"light industrial\" uses to avoid public hearings required for heavier industrial classifications. The actual power draw, water consumption, noise, and traffic of a 200+ MW data center is categorically different from a distribution warehouse of equivalent square footage.",
+    "source": "American Planning Association, \"Data Centers and Land Use,\" 2023",
+    "pillar": "how-to-fight-playbook"
+  }
+]
