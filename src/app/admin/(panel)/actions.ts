@@ -98,8 +98,11 @@ export async function saveProject(formData: FormData) {
     nextHearingDetails: str("nextHearingDetails"),
     sources,
     verificationNote: str("verificationNote"),
-    // "Mark verified now" stamps today; otherwise keep the existing stamp.
-    ...(formData.get("markVerified") ? { verifiedAt: new Date() } : {}),
+    verificationTier: (str("verificationTier") ?? "lead") as "verified" | "corroborated" | "lead",
+    // "Mark verified now" stamps today and promotes the tier; otherwise keep the existing stamp.
+    ...(formData.get("markVerified")
+      ? { verifiedAt: new Date(), verificationTier: "verified" as const }
+      : {}),
     published: formData.get("published") === "on",
     updatedAt: new Date(),
   };

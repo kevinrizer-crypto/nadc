@@ -6,14 +6,14 @@ import { US_STATES } from "@/lib/site";
 
 type Status = { kind: "idle" } | { kind: "submitting" } | { kind: "ok"; message: string } | { kind: "error"; message: string };
 
-export default function TipForm() {
+export default function TipForm({ initialMessage = "" }: { initialMessage?: string }) {
   const [form, setForm] = useState({
     reporterName: "",
     reporterEmail: "",
     locationText: "",
     state: "",
     zip: "",
-    message: "",
+    message: initialMessage,
     links: "",
     consent: false,
     website: "", // honeypot

@@ -79,6 +79,7 @@ function toClientProject(p: Awaited<ReturnType<typeof getPublishedProjects>>[num
     capacity: p.capacity,
     investment: p.investment,
     nextHearingDate: p.nextHearingDate,
+    verificationTier: p.verificationTier,
   };
 }
 

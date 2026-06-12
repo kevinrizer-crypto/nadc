@@ -27,7 +27,12 @@ export const projectStatus = pgEnum("project_status", [
   "canceled",
   "delayed",
   "operating",
+  "under_construction",
 ]);
+
+// Trust tiers: see drizzle/0001_verification_tier.sql. Public pages label
+// every entry with its tier; "lead" entries stay unpublished.
+export const verificationTier = pgEnum("verification_tier", ["verified", "corroborated", "lead"]);
 
 export const projects = pgTable(
   "projects",
@@ -58,6 +63,7 @@ export const projects = pgTable(
     sources: jsonb("sources").$type<{ url: string; label?: string; accessedAt?: string }[]>().notNull().default([]),
     // Editorial verification state. Entries render a "last verified" stamp;
     // anything stale or unverified is flagged in admin and labeled on the page.
+    verificationTier: verificationTier("verification_tier").notNull().default("lead"),
     verifiedAt: timestamp("verified_at", { withTimezone: true }),
     verificationNote: text("verification_note"),
     published: boolean("published").notNull().default(false),

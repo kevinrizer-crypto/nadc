@@ -10,11 +10,18 @@ const MARKER_COLORS: Record<string, string> = {
   proposed: "#00469C",
   contested: "#CC1332",
   approved: "#B45309",
+  under_construction: "#B45309",
   delayed: "#64748B",
   operating: "#64748B",
   withdrawn: "#047857",
   blocked: "#047857",
   canceled: "#047857",
+};
+
+const TIER_NOTES: Record<string, string> = {
+  verified: "✓ Verified by NADC",
+  corroborated: "Reported — not yet human-verified",
+  lead: "Lead — pending review",
 };
 
 /**
@@ -71,6 +78,7 @@ export default function TrackerMap({ projects }: { projects: ClientProject[] }) 
            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;margin-top:6px;color:${MARKER_COLORS[p.status] ?? "#64748B"}">${escapeHtml(
           p.statusDetail ?? p.status
         )}</div>
+           <div style="font-size:10px;color:#94a3b8;margin-top:3px">${escapeHtml(TIER_NOTES[p.verificationTier] ?? "")}</div>
          </div>`
       );
 
@@ -96,9 +104,9 @@ export default function TrackerMap({ projects }: { projects: ClientProject[] }) 
         {[
           ["Proposed", "#00469C"],
           ["Contested", "#CC1332"],
-          ["Approved", "#B45309"],
+          ["Approved / Building", "#B45309"],
           ["Withdrawn / Blocked", "#047857"],
-          ["Delayed / Other", "#64748B"],
+          ["Operating / Other", "#64748B"],
         ].map(([label, color]) => (
           <li key={label} className="flex items-center gap-1.5 font-mono text-2xs text-slate-500">
             <span aria-hidden="true" className="inline-block w-3 h-3 rounded-full" style={{ background: color }} />

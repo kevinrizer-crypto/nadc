@@ -8,7 +8,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/report" },
 };
 
-export default function ReportPage() {
+export default async function ReportPage({ searchParams }: { searchParams: Promise<{ project?: string }> }) {
+  const { project } = await searchParams;
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <p className="section-label">Tip Line</p>
@@ -22,7 +23,17 @@ export default function ReportPage() {
         <strong className="text-ink">Your identity is protected.</strong> Your name is optional, your contact details
         are never published, and we treat tipster information as sensitive data.
       </p>
-      <TipForm />
+      {project && (
+        <div className="card border-primary/30 bg-primary/5 px-4 py-3 mb-8">
+          <p className="font-body text-sm text-ink">
+            You&apos;re confirming or correcting our entry for <strong>{project}</strong> — thank you. Tell us what you
+            know: is the project real, has the status changed, what did we get wrong?
+          </p>
+        </div>
+      )}
+      <TipForm
+        initialMessage={project ? `Regarding the tracked project "${project}": ` : ""}
+      />
     </div>
   );
 }

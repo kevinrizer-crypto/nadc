@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { projects } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import StatusBadge from "@/components/StatusBadge";
+import TierBadge from "@/components/TierBadge";
 import { deleteProject } from "../actions";
 
 export default async function AdminProjectsPage() {
@@ -21,7 +22,7 @@ export default async function AdminProjectsPage() {
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-[#CCCCCC]">
-              {["Project", "Location", "Status", "Published", "Verified", ""].map((h, i) => (
+              {["Project", "Location", "Status", "Tier", "Published", "Verified", ""].map((h, i) => (
                 <th key={i} className="font-mono text-2xs uppercase tracking-[0.15em] text-slate-400 px-4 py-3">
                   {h}
                 </th>
@@ -43,6 +44,9 @@ export default async function AdminProjectsPage() {
                   </td>
                   <td className="px-4 py-3">
                     <StatusBadge status={p.status} detail={p.statusDetail} />
+                  </td>
+                  <td className="px-4 py-3">
+                    <TierBadge tier={p.verificationTier} />
                   </td>
                   <td className="px-4 py-3 font-mono text-xs">{p.published ? "✓" : "draft"}</td>
                   <td className={`px-4 py-3 font-mono text-xs ${stale ? "text-accent" : "text-slate-500"}`}>

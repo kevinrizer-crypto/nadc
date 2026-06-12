@@ -95,25 +95,37 @@ export default async function ProjectPage({ params }: { params: Promise<{ state:
       </div>
       <p className="font-body text-lg text-slate-500 mb-8">{place}</p>
 
-      {/* Verification stamp — honesty about data freshness */}
-      <p className="card border-amber-300 bg-amber-50 px-4 py-3 font-body text-xs text-amber-900 mb-10">
-        {project.verifiedAt ? (
-          <>
-            Last verified against sources on{" "}
-            <strong>{formatDateUTC(project.verifiedAt)}</strong>. Statuses
-            change month to month — check the sources below before relying on this entry, and{" "}
-            <Link href="/report" className="underline">
-              tell us
-            </Link>{" "}
-            if something has changed.
-          </>
-        ) : (
-          <>
-            <strong>Unverified:</strong> this entry has not yet completed editorial verification. Treat details as
-            preliminary.
-          </>
-        )}
-      </p>
+      {/* Verification tier — honesty about how solid this entry is */}
+      {project.verificationTier === "verified" && project.verifiedAt ? (
+        <p className="card border-emerald-300 bg-emerald-50 px-4 py-3 font-body text-xs text-emerald-900 mb-10">
+          <strong>✓ Verified</strong> against sources on <strong>{formatDateUTC(project.verifiedAt)}</strong>. Statuses
+          change month to month — check the sources below before relying on this entry, and{" "}
+          <Link href={`/report?project=${encodeURIComponent(project.name)}`} className="underline">
+            tell us
+          </Link>{" "}
+          if something has changed.
+        </p>
+      ) : project.verificationTier === "corroborated" ? (
+        <div className="card border-amber-300 bg-amber-50 px-4 py-3 font-body text-xs text-amber-900 mb-10">
+          <p className="mb-2">
+            <strong>Reported, not yet human-verified.</strong> This entry comes from multiple independent published
+            sources (listed below) but hasn&apos;t completed NADC&apos;s editorial verification. Treat details as
+            well-sourced but provisional.
+          </p>
+          <p>
+            <strong>Live near this site?</strong> You&apos;re the best fact-checker there is —{" "}
+            <Link href={`/report?project=${encodeURIComponent(project.name)}`} className="underline font-semibold">
+              confirm or correct this entry
+            </Link>
+            .
+          </p>
+        </div>
+      ) : (
+        <p className="card border-amber-300 bg-amber-50 px-4 py-3 font-body text-xs text-amber-900 mb-10">
+          <strong>Unverified:</strong> this entry has not yet completed editorial verification. Treat details as
+          preliminary.
+        </p>
+      )}
 
       {/* Fact table */}
       <div className="card divide-y divide-[#EEEEEE] mb-10">

@@ -4,8 +4,9 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import StatusBadge from "./StatusBadge";
+import TierBadge from "./TierBadge";
 import TrackerMap from "./TrackerMap";
-import { STATUS_LABELS, US_STATES } from "@/lib/site";
+import { STATUS_LABELS, TIER_LABELS, US_STATES } from "@/lib/site";
 import { formatDateUTC } from "@/lib/dates";
 import type { ClientProject } from "@/app/tracker/page";
 
@@ -14,6 +15,7 @@ export default function TrackerExplorer({ projects }: { projects: ClientProject[
   const [q, setQ] = useState(params.get("q") ?? "");
   const [state, setState] = useState(params.get("state") ?? "");
   const [status, setStatus] = useState(params.get("status") ?? "");
+  const [tier, setTier] = useState(params.get("tier") ?? "");
   const [view, setView] = useState<"map" | "table">("map");
 
   const filtered = useMemo(() => {
@@ -21,12 +23,13 @@ export default function TrackerExplorer({ projects }: { projects: ClientProject[
     return projects.filter((p) => {
       if (state && p.state !== state) return false;
       if (status && p.status !== status) return false;
+      if (tier && p.verificationTier !== tier) return false;
       if (!needle) return true;
       return [p.name, p.developer, p.city, p.county, p.state, p.nearestZip, US_STATES[p.state]]
         .filter(Boolean)
         .some((field) => field!.toLowerCase().includes(needle));
     });
-  }, [projects, q, state, status]);
+  }, [projects, q, state, status, tier]);
 
   const statesPresent = [...new Set(projects.map((p) => p.state))].sort();
 
@@ -64,6 +67,14 @@ export default function TrackerExplorer({ projects }: { projects: ClientProject[
                 {label}
               </option>
             ))}
+          </select>
+        </label>
+        <label>
+          <span className="sr-only">Filter by confidence</span>
+          <select className="input sm:w-40" value={tier} onChange={(e) => setTier(e.target.value)}>
+            <option value="">All confidence</option>
+            <option value="verified">{TIER_LABELS.verified} only</option>
+            <option value="corroborated">{TIER_LABELS.corroborated} only</option>
           </select>
         </label>
         <div role="group" aria-label="View" className="flex border border-[#CCCCCC] rounded-sm overflow-hidden">
@@ -106,7 +117,7 @@ export default function TrackerExplorer({ projects }: { projects: ClientProject[
             <caption className="sr-only">Tracked data center projects</caption>
             <thead>
               <tr className="border-b border-[#CCCCCC]">
-                {["Project", "Location", "Developer", "Status", "Capacity", "Next hearing"].map((h) => (
+                {["Project", "Location", "Developer", "Status", "Confidence", "Capacity", "Next hearing"].map((h) => (
                   <th key={h} scope="col" className="font-mono text-2xs uppercase tracking-[0.15em] text-slate-400 px-4 py-3">
                     {h}
                   </th>
@@ -130,6 +141,9 @@ export default function TrackerExplorer({ projects }: { projects: ClientProject[
                   <td className="px-4 py-3 font-body text-sm text-slate-600">{p.developer ?? "—"}</td>
                   <td className="px-4 py-3">
                     <StatusBadge status={p.status} detail={p.statusDetail} />
+                  </td>
+                  <td className="px-4 py-3">
+                    <TierBadge tier={p.verificationTier} />
                   </td>
                   <td className="px-4 py-3 font-mono text-xs text-slate-600">{p.capacity ?? "—"}</td>
                   <td className="px-4 py-3 font-mono text-xs text-slate-600">

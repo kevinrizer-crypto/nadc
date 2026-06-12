@@ -26,6 +26,20 @@ export const STATUS_LABELS: Record<string, string> = {
   canceled: "Canceled",
   delayed: "Delayed",
   operating: "Operating",
+  under_construction: "Under Construction",
+};
+
+// Verification tiers — how solid an entry is, shown on every tracker surface.
+export const TIER_LABELS: Record<string, string> = {
+  verified: "Verified",
+  corroborated: "Reported", // public-facing wording: sourced but not yet human-verified
+  lead: "Lead",
+};
+
+export const TIER_STYLES: Record<string, string> = {
+  verified: "bg-emerald-50 text-emerald-800 border-emerald-300",
+  corroborated: "bg-amber-50 text-amber-800 border-amber-300",
+  lead: "bg-slate-100 text-slate-600 border-slate-300",
 };
 
 // Status → badge styling (Tailwind classes), used by tracker UI.
@@ -38,6 +52,7 @@ export const STATUS_STYLES: Record<string, string> = {
   canceled: "bg-emerald-50 text-emerald-800 border-emerald-300",
   delayed: "bg-slate-100 text-slate-700 border-slate-300",
   operating: "bg-slate-100 text-slate-700 border-slate-300",
+  under_construction: "bg-orange-50 text-orange-800 border-orange-300",
 };
 
 export const US_STATES: Record<string, string> = {

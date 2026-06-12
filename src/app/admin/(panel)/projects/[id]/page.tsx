@@ -91,6 +91,15 @@ export default async function AdminProjectEditPage({ params }: { params: Promise
           <textarea name="verificationNote" rows={2} defaultValue={project?.verificationNote ?? ""} className="input" />
         </label>
 
+        <label className="block sm:w-72">
+          <span className="label">Verification tier</span>
+          <select name="verificationTier" defaultValue={project?.verificationTier ?? "lead"} className="input">
+            <option value="verified">Verified — human/primary-source confirmed</option>
+            <option value="corroborated">Corroborated — 2+ sources, not human-checked</option>
+            <option value="lead">Lead — single source, keep unpublished</option>
+          </select>
+        </label>
+
         <div className="flex flex-wrap gap-6">
           <label className="flex items-center gap-2 font-body text-sm text-ink">
             <input type="checkbox" name="markVerified" />
