@@ -14,6 +14,7 @@
     "assets:generate": "python3 scripts/generate_brand_assets.py"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.104.1",
     "@types/pg": "^8.11.10",
     "drizzle-orm": "^0.38.3",
     "gray-matter": "^4.0.3",
