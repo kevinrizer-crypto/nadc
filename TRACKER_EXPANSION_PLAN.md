@@ -103,7 +103,35 @@ existing 30**, attaches attribution, and loads them at the right tier. Re-runnab
 monthly so the list stays current. This alone meaningfully expands coverage with
 zero licensing risk.
 
-**Phase C — Lead-driven primary-source verification (the smart, scalable part).**
+> **Phase C status (June 12, 2026): LIVE.** `scripts/verify-leads.ts` —
+> Claude Opus 4.8 + server-side web search per lead, then independent
+> HEAD/GET validation of every returned URL, then tier re-derived from
+> reachable independent-domain count (≥2 → corroborated/published, 1 → lead,
+> 0/!exists → skip). First batch: the 13 held-out Epoch rows → 13 published
+> (after merging one true duplicate: the Stargate Wisconsin site = the
+> verified "Lighthouse Campus" seed entry). Tracker now at **78 published**
+> (30 verified + 48 reported). Cost ≈ $3.40 model + web-search fees for 13.
+>
+> **Design lesson baked in:** the pipeline does NOT fuzzy-merge by name —
+> program names like "Stargate" span 5 distinct county campuses, and an
+> early version polluted the Abilene entry's sources with Milam/Shackelford
+> citations. For an automated pipeline, **under-merging (a visible duplicate
+> a human resolves in admin) is far safer than over-merging (wrong sources
+> on a page)**. The same-state+ZIP cluster query is the admin's dup-review tool.
+>
+> **Items flagged for human review:**
+> - "Vantage TX1" — Epoch placed it in Goodyear, AZ, but the "TX1" name
+>   suggests Texas. Confirm location/parcel before relying on it.
+> - Goodyear AZ 85338 has 3 distinct entries (Stream Phoenix, Microsoft
+>   Goodyear, Vantage TX1) — genuine corridor, but verify they're separate.
+> - 4 Epoch-imported entries were independently re-sourced by Phase C and no
+>   longer carry the Epoch CC-BY line (defensible — independent primary
+>   sources, not a redistribution of Epoch's dataset).
+>
+> **To add more leads:** drop names into `content/leads.csv` (incl. ones from
+> the Business Insider / Axios / Cleanview articles) and re-run.
+
+**Phase C — Lead-driven primary-source verification (the smart, scalable part). ✅ LIVE**
 For candidate projects gathered from the aggregator *leads*, an automated
 pipeline does a targeted web search + structured read to find and attach a
 primary or local-news source confirming each one. Projects that get a
