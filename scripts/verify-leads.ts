@@ -57,17 +57,6 @@ function slugify(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 150);
 }
 
-function tokens(s: string): Set<string> {
-  const stop = new Set(["data", "center", "centers", "campus", "the", "of", "llc", "inc", "project"]);
-  return new Set(s.toLowerCase().split(/[^a-z0-9]+/).filter((t) => t.length > 2 && !stop.has(t)));
-}
-function tokenOverlap(a: string, b: string): number {
-  const tb = tokens(b);
-  let n = 0;
-  for (const t of tokens(a)) if (tb.has(t)) n++;
-  return n;
-}
-
 /** Validate a URL actually resolves. HEAD first, GET fallback. */
 async function urlReachable(url: string): Promise<boolean> {
   for (const method of ["HEAD", "GET"] as const) {
@@ -247,10 +236,6 @@ async function main() {
     .filter((l) => l.name)
     .slice(0, limit);
 
-  const { rows: existing } = await pool.query(
-    `SELECT id, name, developer, state, nearest_zip, latitude, longitude FROM projects`
-  );
-
   console.log(`Verifying ${leads.length} leads with ${MODEL} + web search...\n`);
   const totalUsage = { input: 0, output: 0 };
   const summary = { corroborated: 0, lead: 0, rejected: 0, failed: 0 };
@@ -304,15 +289,14 @@ async function main() {
       summary.rejected++;
       continue;
     }
+    summary[tier === "corroborated" ? "corroborated" : "lead"]++;
 
-    // Dedupe against existing projects.
+    // No fuzzy merge: program names like "Stargate" span multiple distinct
+    // campuses, so name-similarity merging pollutes the wrong entry's sources.
+    // We insert by slug (state+slug unique). True same-site-different-name
+    // duplicates are rare and a human merges them in admin — far safer than
+    // auto-merging distinct sites.
     const state = (verdict.state ?? lead.state ?? "").toUpperCase().slice(0, 2);
-    const match = existing.find((p) => {
-      if (p.state !== state) return false;
-      const score = tokenOverlap(`${lead.name} ${verdict!.developer ?? ""}`, `${p.name} ${p.developer ?? ""}`);
-      const sameZip = Boolean(verdict!.nearestZip && p.nearest_zip && verdict!.nearestZip === p.nearest_zip);
-      return score >= 2 || (sameZip && score >= 1);
-    });
 
     let coords: { lat: number; lng: number } | null =
       verdict.latitude != null && verdict.longitude != null ? { lat: verdict.latitude, lng: verdict.longitude } : null;
@@ -323,45 +307,37 @@ async function main() {
 
     if (!apply) continue;
 
-    if (match) {
-      await pool.query(
-        `UPDATE projects SET
-           sources = (SELECT jsonb_agg(DISTINCT s) FROM (SELECT jsonb_array_elements(sources || $1::jsonb) AS s) t),
-           verification_note = $2, updated_at = now()
-         WHERE id = $3`,
-        [sourcesJson, note, match.id]
-      );
-    } else {
-      await pool.query(
-        `INSERT INTO projects
-           (slug, name, developer, city, county, state, nearest_zip, latitude, longitude,
-            status, status_detail, capacity, investment, notes, sources,
-            verification_tier, verification_note, published)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
-         ON CONFLICT (state, slug) DO UPDATE SET sources = EXCLUDED.sources, verification_note = EXCLUDED.verification_note, updated_at = now()`,
-        [
-          slugify(lead.name),
-          lead.name,
-          verdict.developer ?? null,
-          verdict.city ?? lead.city ?? null,
-          verdict.county ?? null,
-          state,
-          verdict.nearestZip ?? null,
-          coords?.lat ?? null,
-          coords?.lng ?? null,
-          ["proposed", "contested", "approved", "under_construction", "operating", "withdrawn", "blocked", "canceled", "delayed"].includes(verdict.status) ? verdict.status : "proposed",
-          verdict.status === "unknown" ? null : null,
-          verdict.capacity ?? null,
-          verdict.investment ?? null,
-          verdict.summary ?? null,
-          sourcesJson,
-          tier, // 'corroborated' or 'lead'
-          note,
-          tier === "corroborated", // publish corroborated; leads stay unpublished
-        ]
-      );
-    }
-    summary[tier === "corroborated" ? "corroborated" : "lead"]++;
+    await pool.query(
+      `INSERT INTO projects
+         (slug, name, developer, city, county, state, nearest_zip, latitude, longitude,
+          status, status_detail, capacity, investment, notes, sources,
+          verification_tier, verification_note, published)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
+       ON CONFLICT (state, slug) DO UPDATE SET
+         sources = EXCLUDED.sources, verification_note = EXCLUDED.verification_note,
+         developer = COALESCE(projects.developer, EXCLUDED.developer),
+         capacity = COALESCE(projects.capacity, EXCLUDED.capacity), updated_at = now()`,
+      [
+        slugify(lead.name),
+        lead.name,
+        verdict.developer ?? null,
+        verdict.city ?? lead.city ?? null,
+        verdict.county ?? null,
+        state,
+        verdict.nearestZip ?? null,
+        coords?.lat ?? null,
+        coords?.lng ?? null,
+        ["proposed", "contested", "approved", "under_construction", "operating", "withdrawn", "blocked", "canceled", "delayed"].includes(verdict.status) ? verdict.status : "proposed",
+        null,
+        verdict.capacity ?? null,
+        verdict.investment ?? null,
+        verdict.summary ?? null,
+        sourcesJson,
+        tier, // 'corroborated' or 'lead'
+        note,
+        tier === "corroborated", // publish corroborated; leads stay unpublished
+      ]
+    );
   }
 
   const cost = (totalUsage.input / 1e6) * 5 + (totalUsage.output / 1e6) * 25;
