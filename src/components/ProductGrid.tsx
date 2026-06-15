@@ -20,8 +20,9 @@ export type ClientProduct = {
 const CATEGORIES: Record<string, string> = {
   all: "All Products",
   signs: "Yard Signs",
-  print: "Print Materials",
   apparel: "Apparel",
+  accessories: "Stickers & Pins",
+  print: "Print Materials",
   bundle: "Organizer Bundles",
 };
 

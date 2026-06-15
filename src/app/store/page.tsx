@@ -20,9 +20,17 @@ export default async function StorePage() {
         <p className="section-label">NADC Store</p>
         <h1 className="font-display text-4xl sm:text-5xl text-primary mb-4">Gear for the fight</h1>
         <p className="font-body text-base text-slate-500 leading-relaxed">
-          Yard signs, door hangers, and organizing kits — designed to be legible at 50 feet.{" "}
+          Yard signs, shirts, stickers, and organizing kits — designed to be legible at 50 feet.{" "}
           <strong className="text-ink">Store proceeds fund the research operation.</strong>
         </p>
+        <div className="card border-primary/30 bg-primary/5 p-4 mt-6 flex flex-wrap items-center justify-between gap-3">
+          <p className="font-body text-sm text-ink">
+            Want a <strong>free</strong> custom yard sign for your town? Make a print-ready one in seconds.
+          </p>
+          <a href="/yard-sign" className="btn-primary !py-2 !px-4 text-sm whitespace-nowrap">
+            Make a free yard sign
+          </a>
+        </div>
       </div>
 
       {dbError ? (

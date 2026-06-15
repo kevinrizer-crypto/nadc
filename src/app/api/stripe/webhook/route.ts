@@ -1,10 +1,53 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { db } from "@/db";
-import { donations, orders } from "@/db/schema";
+import { donations, orders, orderItems, products } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getStripe, stripeConfigured } from "@/lib/stripe";
 import { sendAdminNotification } from "@/lib/email";
+import { createPrintfulOrder, printfulConfigured, type FulfillItem } from "@/lib/printful";
+
+/** Forwards a paid order to Printful if every item maps to a sync variant. */
+async function fulfillViaPrintful(orderId: number, email: string | null, shipping: unknown) {
+  if (!printfulConfigured()) return;
+  const items = await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
+  const productRows = await db.select().from(products);
+  const byId = new Map(productRows.map((p) => [p.id, p]));
+
+  const fulfill: FulfillItem[] = [];
+  for (const item of items) {
+    const product = item.productId ? byId.get(item.productId) : undefined;
+    // Look up the Printful sync variant: by chosen variant label, else "" (single-variant), else legacy id.
+    const map = product?.podVariantMap ?? {};
+    const syncVariantId = (item.variant && map[item.variant]) || map[""] || product?.podProductId;
+    if (syncVariantId) fulfill.push({ syncVariantId, quantity: item.quantity });
+  }
+
+  // Only auto-submit when EVERY line maps to Printful — partial orders (e.g. a
+  // bulk yard sign mixed in) go to manual fulfillment to avoid shipping half.
+  if (fulfill.length === 0 || fulfill.length !== items.length) return;
+
+  try {
+    const podOrderId = await createPrintfulOrder({
+      externalId: String(orderId),
+      shipping: shipping as never,
+      email,
+      items: fulfill,
+    });
+    if (podOrderId) {
+      await db
+        .update(orders)
+        .set({ podOrderId, status: process.env.PRINTFUL_AUTO_CONFIRM === "true" ? "fulfilled" : "paid", updatedAt: new Date() })
+        .where(eq(orders.id, orderId));
+    }
+  } catch (err) {
+    console.error(`Printful fulfillment failed for order ${orderId}:`, err);
+    await sendAdminNotification(
+      "Printful fulfillment failed",
+      `<p>Order #${orderId} is paid but could not be auto-submitted to Printful: ${(err as Error).message}. Fulfill it manually in the Printful dashboard.</p>`
+    );
+  }
+}
 
 /**
  * Stripe webhook: marks donations/orders paid, records subscription
@@ -51,21 +94,19 @@ export async function POST(req: Request) {
           `<p>${((session.amount_total ?? 0) / 100).toFixed(2)} USD ${session.mode === "subscription" ? "(monthly Neighbor)" : "(one-time)"}</p>`
         );
       } else if (session.metadata?.kind === "store") {
-        await db
+        const shipping = session.collected_information?.shipping_details ?? null;
+        const [order] = await db
           .update(orders)
-          .set({
-            status: "paid",
-            email,
-            shippingAddress: session.collected_information?.shipping_details ?? null,
-            updatedAt: new Date(),
-          })
-          .where(eq(orders.stripeSessionId, session.id));
+          .set({ status: "paid", email, shippingAddress: shipping, updatedAt: new Date() })
+          .where(eq(orders.stripeSessionId, session.id))
+          .returning({ id: orders.id });
         await sendAdminNotification(
           "Store order paid",
-          `<p>Order for ${((session.amount_total ?? 0) / 100).toFixed(2)} USD. Fulfill via the admin panel${
-            process.env.PRINTFUL_API_KEY ? " (Printful configured)" : " (set up Printful to automate fulfillment)"
-          }.</p>`
+          `<p>Order for ${((session.amount_total ?? 0) / 100).toFixed(2)} USD. ${
+            printfulConfigured() ? "Auto-forwarding to Printful…" : "Set up Printful to automate fulfillment, or fulfill via the admin panel."
+          }</p>`
         );
+        if (order) await fulfillViaPrintful(order.id, email, shipping);
       }
       break;
     }

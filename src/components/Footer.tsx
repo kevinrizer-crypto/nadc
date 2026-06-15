@@ -9,6 +9,7 @@ const columns: { heading: string; links: { label: string; href: string }[] }[] =
       { label: "National Tracker", href: "/tracker" },
       { label: "Learn", href: "/learn" },
       { label: "Organize", href: "/organize" },
+      { label: "Make a Yard Sign", href: "/yard-sign" },
       { label: "Store", href: "/store" },
       { label: "The Grid Newsletter", href: "/subscribe" },
     ],

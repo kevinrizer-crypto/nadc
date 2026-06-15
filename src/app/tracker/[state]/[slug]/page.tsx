@@ -230,6 +230,15 @@ export default async function ProjectPage({ params }: { params: Promise<{ state:
               {project.oppositionGroup ? `Connect with ${project.oppositionGroup}` : "Find or start a local group"}
             </p>
           </Link>
+          <Link
+            href={`/yard-sign${project.city ? `?town=${encodeURIComponent(project.city)}` : ""}`}
+            className="card p-5 hover:border-primary/40 block"
+          >
+            <p className="section-label">Free yard sign</p>
+            <p className="font-body font-semibold text-sm text-ink">
+              {project.city ? `Make a free "${project.city} Against the Data Center" sign` : "Make a free yard sign for your town"}
+            </p>
+          </Link>
         </div>
       </section>
 

@@ -15,6 +15,34 @@
   }
 }
 
+/* Yard-sign print: render only the sign at true 18"×24", no margins. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .sign-print-area,
+  .sign-print-area * {
+    visibility: visible;
+  }
+  .sign-print-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+  .sign-print-area .sign-svg {
+    width: 18in;
+    height: 24in;
+    max-width: none;
+    border: none !important;
+  }
+  @page {
+    size: 18in 24in;
+    margin: 0;
+  }
+}
+
 @layer components {
   /* Small-caps mono section label carried over from the previous site */
   .section-label {

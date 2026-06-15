@@ -201,7 +201,10 @@ export const products = pgTable(
     customizable: boolean("customizable").notNull().default(false),
     badge: text("badge"),
     variants: jsonb("variants").$type<string[]>().notNull().default([]),
-    podProductId: text("pod_product_id"), // Printful sync variant id, once configured
+    podProductId: text("pod_product_id"), // legacy single-variant Printful id
+    // Maps each variant label → Printful sync_variant_id. Single-variant
+    // products use the "" key. Powers auto-fulfillment.
+    podVariantMap: jsonb("pod_variant_map").$type<Record<string, string>>().notNull().default({}),
     active: boolean("active").notNull().default(true),
     sortOrder: integer("sort_order").notNull().default(0),
   }

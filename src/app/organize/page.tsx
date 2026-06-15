@@ -123,12 +123,17 @@ export default function OrganizePage() {
         <div className="card p-7 bg-primary text-white border-primary">
           <h2 className="font-display text-2xl mb-3">Get the gear</h2>
           <p className="font-body text-sm text-white/85 leading-relaxed mb-5">
-            The Organizer Kit bundles 10 customizable yard signs, 100 door hangers with QR codes to your project&apos;s
-            tracker page, 50 official postcards, and the organizing guide.
+            Make a <strong>free, print-ready yard sign</strong> for your town in seconds, or order pre-printed signs,
+            shirts, stickers, and the Organizer Kit bundle from the store.
           </p>
-          <Link href="/store" className="inline-block bg-white text-primary font-body font-semibold px-6 py-3 rounded-sm hover:bg-paper transition-colors">
-            Visit the store
-          </Link>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/yard-sign" className="inline-block bg-white text-primary font-body font-semibold px-6 py-3 rounded-sm hover:bg-paper transition-colors">
+              Make a free yard sign
+            </Link>
+            <Link href="/store" className="inline-block border border-white/60 text-white font-body font-semibold px-6 py-3 rounded-sm hover:bg-white/10 transition-colors">
+              Visit the store
+            </Link>
+          </div>
         </div>
       </section>
     </div>

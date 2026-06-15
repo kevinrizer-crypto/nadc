@@ -159,12 +159,28 @@ export async function savePost(formData: FormData) {
 export async function saveProduct(formData: FormData) {
   await requireAdmin();
   const id = Number(formData.get("id"));
+  // Printful variant map: a JSON object of { "variant label": "sync_variant_id" }.
+  // Single-variant products use the "" key. Invalid JSON is rejected.
+  let podVariantMap: Record<string, string> | undefined;
+  const raw = String(formData.get("podVariantMap") ?? "").trim();
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) podVariantMap = parsed;
+      else throw new Error();
+    } catch {
+      throw new Error("Printful variant map must be a JSON object like {\"S\":\"4012\",\"M\":\"4013\"}");
+    }
+  } else {
+    podVariantMap = {};
+  }
   await db
     .update(products)
     .set({
       priceCents: Math.round(parseFloat(String(formData.get("price") ?? "0")) * 100),
       active: formData.get("active") === "on",
       podProductId: String(formData.get("podProductId") ?? "").trim() || null,
+      podVariantMap,
     })
     .where(eq(products.id, id));
   revalidatePath("/admin/products");
