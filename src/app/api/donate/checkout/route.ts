@@ -9,6 +9,18 @@ import { SITE_URL } from "@/lib/site";
 const donateSchema = z.object({
   amountCents: z.number().int().min(100).max(5_000_000),
   recurring: z.boolean().default(true),
+  attribution: z
+    .object({
+      source: z.string().max(120).optional(),
+      medium: z.string().max(120).optional(),
+      campaign: z.string().max(120).optional(),
+      content: z.string().max(120).optional(),
+      term: z.string().max(120).optional(),
+      landing: z.string().max(200).optional(),
+      ts: z.string().max(40).optional(),
+    })
+    .nullable()
+    .optional(),
 });
 
 /**
@@ -36,7 +48,7 @@ export async function POST(req: Request) {
   }
   const parsed = donateSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Invalid donation amount." }, { status: 400 });
-  const { amountCents, recurring } = parsed.data;
+  const { amountCents, recurring, attribution } = parsed.data;
 
   const stripe = getStripe();
   const session = await stripe.checkout.sessions.create({
@@ -67,6 +79,7 @@ export async function POST(req: Request) {
     amountCents,
     recurring,
     status: "pending",
+    attribution: attribution ?? null,
   });
 
   return NextResponse.json({ url: session.url });

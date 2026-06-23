@@ -3,6 +3,7 @@ import "./globals.css";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, OG_DESCRIPTION } from "@/lib/site";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import RedditPixel from "@/components/RedditPixel";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to main content
         </a>
+        <RedditPixel />
         <Header />
         <main id="main">{children}</main>
         <Footer />

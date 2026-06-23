@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SubscribeForm from "@/components/SubscribeForm";
+import RedditConversion from "@/components/RedditConversion";
 
 export const metadata: Metadata = {
   title: "Subscribe to The Grid — Alerts & Newsletter",
@@ -17,6 +18,7 @@ export default async function SubscribePage({
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      {confirm === "ok" && <RedditConversion event="SignUp" />}
       {confirm === "ok" && (
         <div className="card border-emerald-300 bg-emerald-50 p-5 mb-8" role="status">
           <p className="font-body font-semibold text-emerald-800">Subscription confirmed — welcome aboard.</p>

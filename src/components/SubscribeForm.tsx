@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Turnstile from "./Turnstile";
+import { getAttribution } from "@/lib/attribution";
 
 type Status = { kind: "idle" } | { kind: "submitting" } | { kind: "ok"; message: string } | { kind: "error"; message: string };
 
@@ -37,6 +38,7 @@ export default function SubscribeForm({ compact = false, defaultZip = "" }: { co
           preferences: { national, states: [], zips: zip ? [zip] : [], projectIds: [] },
           turnstileToken,
           website,
+          attribution: getAttribution(),
         }),
       });
       const data = await res.json();

@@ -6,11 +6,11 @@ import type { NextConfig } from "next";
 const devScript = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${devScript} https://js.stripe.com https://challenges.cloudflare.com`,
+  `script-src 'self' 'unsafe-inline'${devScript} https://js.stripe.com https://challenges.cloudflare.com https://www.redditstatic.com`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data: blob: https:",
-  "connect-src 'self' https://tiles.openfreemap.org https://api.stripe.com",
+  "connect-src 'self' https://tiles.openfreemap.org https://api.stripe.com https://*.reddit.com https://www.redditstatic.com",
   "worker-src 'self' blob:",
   "frame-src https://js.stripe.com https://checkout.stripe.com https://challenges.cloudflare.com",
   "frame-ancestors 'none'",

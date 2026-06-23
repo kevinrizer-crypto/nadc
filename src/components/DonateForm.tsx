@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getAttribution } from "@/lib/attribution";
 
 const MONTHLY_AMOUNTS = [10, 15, 25, 50];
 const ONETIME_AMOUNTS = [25, 50, 100, 250];
@@ -26,7 +27,7 @@ export default function DonateForm() {
       const res = await fetch("/api/donate/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amountCents: effective, recurring }),
+        body: JSON.stringify({ amountCents: effective, recurring, attribution: getAttribution() }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Checkout failed.");

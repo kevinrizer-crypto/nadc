@@ -14,6 +14,17 @@ import {
   index,
 } from "drizzle-orm/pg-core";
 
+// First-touch marketing attribution captured from UTM params on the landing URL.
+export type Attribution = {
+  source?: string;
+  medium?: string;
+  campaign?: string;
+  content?: string;
+  term?: string;
+  landing?: string;
+  ts?: string;
+};
+
 // ---------------------------------------------------------------------------
 // Tracker
 // ---------------------------------------------------------------------------
@@ -142,6 +153,8 @@ export const subscribers = pgTable(
     confirmToken: varchar("confirm_token", { length: 64 }),
     confirmTokenExpiresAt: timestamp("confirm_token_expires_at", { withTimezone: true }),
     unsubscribeToken: varchar("unsubscribe_token", { length: 64 }).notNull(),
+    // First-touch marketing attribution (UTM tags from the landing URL).
+    attribution: jsonb("attribution").$type<Attribution | null>(),
     espContactId: text("esp_contact_id"), // ID at the email provider, once synced
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
@@ -177,6 +190,7 @@ export const donations = pgTable(
     amountCents: integer("amount_cents").notNull(),
     currency: varchar("currency", { length: 3 }).notNull().default("usd"),
     recurring: boolean("recurring").notNull().default(false),
+    attribution: jsonb("attribution").$type<Attribution | null>(),
     status: varchar("status", { length: 30 }).notNull().default("pending"), // pending | completed | active | canceled | failed
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

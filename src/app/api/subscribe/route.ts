@@ -27,6 +27,18 @@ const subscribeSchema = z.object({
     .default({ national: true, states: [], zips: [], projectIds: [] }),
   turnstileToken: z.string().nullable().optional(),
   website: z.string().optional(), // honeypot
+  attribution: z
+    .object({
+      source: z.string().max(120).optional(),
+      medium: z.string().max(120).optional(),
+      campaign: z.string().max(120).optional(),
+      content: z.string().max(120).optional(),
+      term: z.string().max(120).optional(),
+      landing: z.string().max(200).optional(),
+      ts: z.string().max(40).optional(),
+    })
+    .nullable()
+    .optional(),
 });
 
 export async function POST(req: Request) {
@@ -104,6 +116,7 @@ export async function POST(req: Request) {
         confirmToken,
         confirmTokenExpiresAt: expires,
         unsubscribeToken: randomToken(),
+        attribution: data.attribution ?? null,
       })
       .returning({ id: subscribers.id });
     subscriberId = row.id;
