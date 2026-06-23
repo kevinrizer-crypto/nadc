@@ -36,8 +36,11 @@ export default function Header() {
                 {item.label}
               </Link>
             ))}
-            <Link href="/report" className="btn-accent !px-4 !py-2 text-sm">
+            <Link href="/report" className="btn-outline !px-4 !py-2 text-sm">
               Report a Project
+            </Link>
+            <Link href="/donate" className="btn-accent !px-4 !py-2 text-sm">
+              Donate
             </Link>
           </nav>
 
@@ -71,10 +74,17 @@ export default function Header() {
             ))}
             <Link
               href="/report"
-              className="block px-3 py-2 font-body text-base font-semibold text-accent"
+              className="block px-3 py-2 font-body text-base font-semibold text-primary"
               onClick={() => setOpen(false)}
             >
               Report a Project
+            </Link>
+            <Link
+              href="/donate"
+              className="block px-3 py-2 mt-1 font-body text-base font-semibold text-white bg-accent rounded-sm text-center"
+              onClick={() => setOpen(false)}
+            >
+              Donate
             </Link>
           </div>
         </nav>
