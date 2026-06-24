@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { captureAttribution } from "@/lib/attribution";
 
 /**
@@ -21,7 +21,13 @@ declare global {
   }
 }
 
-const PIXEL_ID = process.env.NEXT_PUBLIC_REDDIT_PIXEL_ID;
+// Pixel ID is public by design (sent to every browser). Hardcoded so it ships
+// without an env-var round-trip; override via env if it ever changes.
+const PIXEL_ID = process.env.NEXT_PUBLIC_REDDIT_PIXEL_ID || "a2_j84cq3mymigf";
+
+// Only the production host fires the pixel — keeps dev/preview traffic out of
+// Reddit's conversion data.
+const PROD_HOST = "nadc.info";
 
 export function redditTrack(event: string, opts?: Record<string, unknown>) {
   if (typeof window !== "undefined" && typeof window.rdt === "function") {
@@ -30,12 +36,16 @@ export function redditTrack(event: string, opts?: Record<string, unknown>) {
 }
 
 export default function RedditPixel() {
-  // Always capture attribution (cheap, no third-party code).
+  const [active, setActive] = useState(false);
+
+  // Always capture attribution (cheap, first-party, no third-party code).
+  // Activate the Reddit pixel only on the production host.
   useEffect(() => {
     captureAttribution();
+    if (window.location.hostname === PROD_HOST) setActive(true);
   }, []);
 
-  if (!PIXEL_ID) return null;
+  if (!PIXEL_ID || !active) return null;
 
   return (
     <Script id="reddit-pixel" strategy="afterInteractive">
