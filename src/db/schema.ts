@@ -23,6 +23,8 @@ export type Attribution = {
   term?: string;
   landing?: string;
   ts?: string;
+  rdtCid?: string;
+  rdtUuid?: string;
 };
 
 // ---------------------------------------------------------------------------

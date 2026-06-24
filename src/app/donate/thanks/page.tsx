@@ -25,7 +25,8 @@ export default async function DonateThanksPage({ searchParams }: { searchParams:
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
-      <RedditConversion event="Purchase" value={value} />
+      {/* conversionId = Stripe session id, matching the server-side CAPI event → dedup */}
+      <RedditConversion event="Purchase" value={value} conversionId={session_id} />
       <h1 className="font-display text-4xl sm:text-5xl text-primary mb-4">Thank you, Neighbor.</h1>
       <p className="font-body text-base text-slate-500 leading-relaxed mb-3">
         Your support keeps the research free for every community that needs it. A receipt from Stripe is on its way to

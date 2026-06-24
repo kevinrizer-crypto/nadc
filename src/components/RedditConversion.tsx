@@ -8,9 +8,24 @@ import { redditTrack } from "./RedditPixel";
  * and donation thank-you pages so cold-ad → conversion is measurable in Reddit
  * Ads Manager. No-ops when the pixel isn't configured.
  */
-export default function RedditConversion({ event, value }: { event: string; value?: number }) {
+export default function RedditConversion({
+  event,
+  value,
+  conversionId,
+}: {
+  event: string;
+  value?: number;
+  conversionId?: string;
+}) {
   useEffect(() => {
-    redditTrack(event, value != null ? { value, currency: "USD" } : undefined);
-  }, [event, value]);
+    // conversionId must match the server-side CAPI event for Reddit to dedup.
+    const opts: Record<string, unknown> = {};
+    if (value != null) {
+      opts.value = value;
+      opts.currency = "USD";
+    }
+    if (conversionId) opts.conversionId = conversionId;
+    redditTrack(event, Object.keys(opts).length ? opts : undefined);
+  }, [event, value, conversionId]);
   return null;
 }

@@ -17,7 +17,15 @@ export type Attribution = {
   term?: string;
   landing?: string;
   ts?: string;
+  rdtCid?: string; // Reddit click ID (rdt_cid) — server-side conversion match key
+  rdtUuid?: string; // _rdt_uuid cookie set by the pixel — server-side match key
 };
+
+function readCookie(name: string): string | undefined {
+  if (typeof document === "undefined") return undefined;
+  const m = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)"));
+  return m ? decodeURIComponent(m[1]) : undefined;
+}
 
 const KEY = "nadc_attribution";
 const MAX_AGE_DAYS = 30;
@@ -37,11 +45,13 @@ export function captureAttribution(): void {
       content: get("utm_content"),
       term: get("utm_term"),
     };
-    // Only store if there's at least a source (i.e. this was a tagged visit).
-    if (!utm.source) return;
+    const rdtCid = get("rdt_cid");
+    // Store if this was a tagged visit OR carried a Reddit click ID.
+    if (!utm.source && !rdtCid) return;
 
     const attribution: Attribution = {
       ...utm,
+      rdtCid,
       landing: window.location.pathname,
       ts: new Date().toISOString(),
     };
@@ -62,7 +72,10 @@ export function getAttribution(): Attribution | null {
       localStorage.removeItem(KEY);
       return null;
     }
-    return parsed.a;
+    // Augment with the _rdt_uuid cookie at read time — the pixel sets it after
+    // landing, so it may not have existed when attribution was first captured.
+    const rdtUuid = readCookie("_rdt_uuid");
+    return rdtUuid ? { ...parsed.a, rdtUuid } : parsed.a;
   } catch {
     return null;
   }

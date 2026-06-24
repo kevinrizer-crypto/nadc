@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { getStripe, stripeConfigured } from "@/lib/stripe";
 import { sendAdminNotification } from "@/lib/email";
 import { createPrintfulOrder, printfulConfigured, type FulfillItem } from "@/lib/printful";
+import { sendRedditConversion } from "@/lib/reddit-capi";
 
 /** Forwards a paid order to Printful if every item maps to a sync variant. */
 async function fulfillViaPrintful(orderId: number, email: string | null, shipping: unknown) {
@@ -79,7 +80,7 @@ export async function POST(req: Request) {
       const email = session.customer_details?.email ?? null;
 
       if (session.metadata?.kind === "donation") {
-        await db
+        const [donation] = await db
           .update(donations)
           .set({
             status: session.mode === "subscription" ? "active" : "completed",
@@ -88,11 +89,25 @@ export async function POST(req: Request) {
             stripeSubscriptionId: typeof session.subscription === "string" ? session.subscription : null,
             updatedAt: new Date(),
           })
-          .where(eq(donations.stripeSessionId, session.id));
+          .where(eq(donations.stripeSessionId, session.id))
+          .returning({ attribution: donations.attribution });
         await sendAdminNotification(
           "Donation received",
           `<p>${((session.amount_total ?? 0) / 100).toFixed(2)} USD ${session.mode === "subscription" ? "(monthly Neighbor)" : "(one-time)"}</p>`
         );
+        // Reddit Conversions API (server-side Purchase). conversion_id = the
+        // Stripe session id, which the thank-you page pixel also uses → dedup.
+        // Match keys come from attribution captured at checkout (NOT the
+        // webhook request, whose IP/UA belong to Stripe, not the donor).
+        await sendRedditConversion({
+          trackingType: "Purchase",
+          conversionId: session.id,
+          clickId: donation?.attribution?.rdtCid,
+          uuid: donation?.attribution?.rdtUuid,
+          email,
+          valueDecimal: (session.amount_total ?? 0) / 100,
+          currency: (session.currency ?? "usd").toUpperCase(),
+        });
       } else if (session.metadata?.kind === "store") {
         const shipping = session.collected_information?.shipping_details ?? null;
         const [order] = await db

@@ -12,13 +12,13 @@ export const metadata: Metadata = {
 export default async function SubscribePage({
   searchParams,
 }: {
-  searchParams: Promise<{ confirm?: string; unsub?: string }>;
+  searchParams: Promise<{ confirm?: string; unsub?: string; cid?: string }>;
 }) {
-  const { confirm, unsub } = await searchParams;
+  const { confirm, unsub, cid } = await searchParams;
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      {confirm === "ok" && <RedditConversion event="SignUp" />}
+      {confirm === "ok" && <RedditConversion event="SignUp" conversionId={cid} />}
       {confirm === "ok" && (
         <div className="card border-emerald-300 bg-emerald-50 p-5 mb-8" role="status">
           <p className="font-body font-semibold text-emerald-800">Subscription confirmed — welcome aboard.</p>

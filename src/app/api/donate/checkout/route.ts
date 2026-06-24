@@ -18,6 +18,8 @@ const donateSchema = z.object({
       term: z.string().max(120).optional(),
       landing: z.string().max(200).optional(),
       ts: z.string().max(40).optional(),
+      rdtCid: z.string().max(400).optional(),
+      rdtUuid: z.string().max(120).optional(),
     })
     .nullable()
     .optional(),

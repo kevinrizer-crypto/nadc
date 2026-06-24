@@ -4,6 +4,7 @@ import { subscribers, consentEvents } from "@/db/schema";
 import { and, eq, gt } from "drizzle-orm";
 import { clientIp, hashIp } from "@/lib/security";
 import { sendSmsOptInConfirmation, smsConfigured } from "@/lib/sms";
+import { sendRedditConversion } from "@/lib/reddit-capi";
 import { SITE_URL } from "@/lib/site";
 
 /**
@@ -60,5 +61,19 @@ export async function GET(req: Request) {
     }
   }
 
-  return NextResponse.redirect(`${SITE_URL}/subscribe?confirm=ok`);
+  // Reddit Conversions API (server-side SignUp). Shared conversion_id lets the
+  // browser pixel on the redirect page dedup against this event.
+  const conversionId = `signup_${sub.id}`;
+  const attr = sub.attribution;
+  await sendRedditConversion({
+    trackingType: "SignUp",
+    conversionId,
+    clickId: attr?.rdtCid,
+    uuid: attr?.rdtUuid,
+    email: sub.email,
+    ipAddress: clientIp(req),
+    userAgent: req.headers.get("user-agent"),
+  });
+
+  return NextResponse.redirect(`${SITE_URL}/subscribe?confirm=ok&cid=${encodeURIComponent(conversionId)}`);
 }
