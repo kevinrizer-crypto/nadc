@@ -4,6 +4,7 @@ import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, OG_DESCRIPTION } from "@/lib/sit
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RedditPixel from "@/components/RedditPixel";
+import DatamoonScript from "@/components/DatamoonScript";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to main content
         </a>
         <RedditPixel />
+        <DatamoonScript />
         <Header />
         <main id="main">{children}</main>
         <Footer />
