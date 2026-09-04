@@ -10,6 +10,9 @@ import { formatDateUTC } from "@/lib/dates";
 
 export const revalidate = 300; // counters and news refresh every 5 minutes
 
+/** Below this, the subscriber counter is hidden rather than shown as weak proof. */
+const SUBSCRIBER_COUNT_THRESHOLD = 250;
+
 export default async function HomePage() {
   const [counters, latestPosts, projects] = await Promise.all([
     getHomeCounters().catch(() => null),
@@ -48,12 +51,20 @@ export default async function HomePage() {
 
           {/* Live counters */}
           {counters && (
-            <dl className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-16 max-w-3xl">
+            <dl
+              className={`grid grid-cols-2 ${
+                counters.subscribers >= SUBSCRIBER_COUNT_THRESHOLD ? "sm:grid-cols-4" : "sm:grid-cols-3"
+              } gap-6 mt-16 max-w-3xl`}
+            >
               {[
                 { label: "Projects Tracked", value: counters.projectsTracked },
                 { label: "Active Fights", value: counters.activeFights },
                 { label: "Community Wins", value: counters.communityWins },
-                { label: "Subscribers", value: counters.subscribers },
+                // Social proof cuts both ways: a tiny subscriber number in the
+                // hero reads as "nobody is here". Show it only once it helps.
+                ...(counters.subscribers >= SUBSCRIBER_COUNT_THRESHOLD
+                  ? [{ label: "Subscribers", value: counters.subscribers }]
+                  : []),
               ].map((c) => (
                 <div key={c.label}>
                   <dt className="font-mono text-2xs uppercase tracking-[0.2em] text-white/60 order-2">{c.label}</dt>

@@ -44,18 +44,25 @@ export default function Header() {
             </Link>
           </nav>
 
-          <button
-            type="button"
-            className="lg:hidden p-2 text-ink"
-            aria-expanded={open}
-            aria-controls="mobile-nav"
-            aria-label="Toggle navigation menu"
-            onClick={() => setOpen(!open)}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-              {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M3 6h18M3 12h18M3 18h18" />}
-            </svg>
-          </button>
+          {/* Most traffic is mobile, where the nav is collapsed — keep a
+              persistent Donate CTA outside the hamburger. */}
+          <div className="flex items-center gap-1 lg:hidden">
+            <Link href="/donate" className="btn-accent !px-3 !py-1.5 text-sm">
+              Donate
+            </Link>
+            <button
+              type="button"
+              className="p-2 text-ink"
+              aria-expanded={open}
+              aria-controls="mobile-nav"
+              aria-label="Toggle navigation menu"
+              onClick={() => setOpen(!open)}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M3 6h18M3 12h18M3 18h18" />}
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 

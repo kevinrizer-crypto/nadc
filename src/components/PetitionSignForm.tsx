@@ -1,14 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import Turnstile from "./Turnstile";
+import Turnstile, { TURNSTILE_FAILED_MESSAGE, turnstileEnabled, useTurnstileToken } from "./Turnstile";
 
-type Status = { kind: "idle" } | { kind: "submitting" } | { kind: "ok"; message: string } | { kind: "error"; message: string };
+type Status =
+  | { kind: "idle" }
+  | { kind: "verifying" }
+  | { kind: "submitting" }
+  | { kind: "ok"; message: string }
+  | { kind: "error"; message: string };
 
 export default function PetitionSignForm({ petitionId }: { petitionId: number }) {
   const [form, setForm] = useState({ name: "", email: "", zip: "", comment: "", displayPublicly: false, subscribe: false, website: "" });
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
+  const turnstile = useTurnstileToken();
 
   function set<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -16,6 +21,17 @@ export default function PetitionSignForm({ petitionId }: { petitionId: number })
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+
+    let turnstileToken: string | null = null;
+    if (turnstileEnabled) {
+      setStatus({ kind: "verifying" });
+      turnstileToken = await turnstile.awaitToken();
+      if (!turnstileToken) {
+        setStatus({ kind: "error", message: TURNSTILE_FAILED_MESSAGE });
+        return;
+      }
+    }
+
     setStatus({ kind: "submitting" });
     try {
       const res = await fetch("/api/petitions/sign", {
@@ -81,7 +97,7 @@ export default function PetitionSignForm({ petitionId }: { petitionId: number })
         <span>Also subscribe me to The Grid and alerts about this project (double opt-in — we&apos;ll send a confirmation email).</span>
       </label>
 
-      <Turnstile onToken={setTurnstileToken} />
+      <Turnstile onToken={turnstile.onToken} onError={turnstile.onError} />
 
       {status.kind === "error" && (
         <p className="font-body text-sm text-accent-dark" role="alert">
@@ -89,8 +105,8 @@ export default function PetitionSignForm({ petitionId }: { petitionId: number })
         </p>
       )}
 
-      <button type="submit" className="btn-accent" disabled={status.kind === "submitting"}>
-        {status.kind === "submitting" ? "Signing…" : "Sign the petition"}
+      <button type="submit" className="btn-accent" disabled={status.kind === "submitting" || status.kind === "verifying"}>
+        {status.kind === "verifying" ? "Verifying…" : status.kind === "submitting" ? "Signing…" : "Sign the petition"}
       </button>
       <p className="font-body text-xs text-slate-400">
         Your email is used to validate your signature and is never published or sold.

@@ -1,10 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import Turnstile from "./Turnstile";
+import Turnstile, { TURNSTILE_FAILED_MESSAGE, turnstileEnabled, useTurnstileToken } from "./Turnstile";
 import { getAttribution } from "@/lib/attribution";
 
-type Status = { kind: "idle" } | { kind: "submitting" } | { kind: "ok"; message: string } | { kind: "error"; message: string };
+type Status =
+  | { kind: "idle" }
+  | { kind: "verifying" }
+  | { kind: "submitting" }
+  | { kind: "ok"; message: string }
+  | { kind: "error"; message: string };
 
 /**
  * Email + optional SMS signup with granular opt-in (national newsletter,
@@ -20,12 +25,24 @@ export default function SubscribeForm({ compact = false, defaultZip = "" }: { co
   const [national, setNational] = useState(true);
   const [smsConsent, setSmsConsent] = useState(false);
   const [showSms, setShowSms] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [website, setWebsite] = useState(""); // honeypot
 
+  const turnstile = useTurnstileToken();
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+
+    let token: string | null = null;
+    if (turnstileEnabled) {
+      setStatus({ kind: "verifying" });
+      token = await turnstile.awaitToken();
+      if (!token) {
+        setStatus({ kind: "error", message: TURNSTILE_FAILED_MESSAGE });
+        return;
+      }
+    }
+
     setStatus({ kind: "submitting" });
     try {
       const res = await fetch("/api/subscribe", {
@@ -36,7 +53,7 @@ export default function SubscribeForm({ compact = false, defaultZip = "" }: { co
           phone: showSms && smsConsent ? phone : undefined,
           smsConsent: showSms && smsConsent,
           preferences: { national, states: [], zips: zip ? [zip] : [], projectIds: [] },
-          turnstileToken,
+          turnstileToken: token,
           website,
           attribution: getAttribution(),
         }),
@@ -56,6 +73,9 @@ export default function SubscribeForm({ compact = false, defaultZip = "" }: { co
       </div>
     );
   }
+
+  const busy = status.kind === "submitting" || status.kind === "verifying";
+  const buttonLabel = status.kind === "verifying" ? "Verifying…" : status.kind === "submitting" ? "Subscribing…" : "Subscribe";
 
   return (
     <form onSubmit={submit} className="space-y-3" aria-label="Subscribe to alerts">
@@ -94,8 +114,8 @@ export default function SubscribeForm({ compact = false, defaultZip = "" }: { co
           />
         </label>
         {compact && (
-          <button type="submit" className="btn-primary whitespace-nowrap" disabled={status.kind === "submitting"}>
-            {status.kind === "submitting" ? "Subscribing…" : "Subscribe"}
+          <button type="submit" className="btn-primary whitespace-nowrap" disabled={busy}>
+            {buttonLabel}
           </button>
         )}
       </div>
@@ -140,12 +160,18 @@ export default function SubscribeForm({ compact = false, defaultZip = "" }: { co
               </label>
             </fieldset>
           )}
-
-          <Turnstile onToken={setTurnstileToken} />
-          <button type="submit" className="btn-primary" disabled={status.kind === "submitting"}>
-            {status.kind === "submitting" ? "Subscribing…" : "Subscribe"}
-          </button>
         </>
+      )}
+
+      {/* The bot check must render for BOTH variants — the server rejects any
+          submission without a token, compact or not. In compact mode it is
+          interaction-only, so it stays invisible unless a challenge is needed. */}
+      <Turnstile onToken={turnstile.onToken} onError={turnstile.onError} compact={compact} />
+
+      {!compact && (
+        <button type="submit" className="btn-primary" disabled={busy}>
+          {buttonLabel}
+        </button>
       )}
 
       {status.kind === "error" && (
