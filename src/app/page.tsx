@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getHomeCounters, getPublishedPosts, getPublishedProjects } from "@/lib/queries";
 import { getImpacts } from "@/lib/content";
 import SubscribeCTA from "@/components/SubscribeCTA";
+import SubscribeForm from "@/components/SubscribeForm";
 import TrackerSearch from "@/components/TrackerSearch";
 import StatusBadge from "@/components/StatusBadge";
 import { SITE_TAGLINE } from "@/lib/site";
@@ -30,13 +31,13 @@ export default async function HomePage() {
     <>
       {/* Hero */}
       <section className="bg-gradient-to-br from-primary to-primary-dark text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 lg:py-28">
           <div className="max-w-3xl">
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-white/70 mb-4">
               Before they break ground, get organized
             </p>
             <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl leading-tight mb-6">{SITE_TAGLINE}</h1>
-            <p className="font-body text-lg text-white/85 leading-relaxed mb-10 max-w-2xl">
+            <p className="font-body text-lg text-white/85 leading-relaxed mb-6 sm:mb-10 max-w-2xl">
               NADC tracks every proposed data center in America — the power draw, the water use, the tax deals, and the
               public hearings where your voice still matters.
             </p>
@@ -46,6 +47,17 @@ export default async function HomePage() {
                 Is a data center proposed near you?
               </h2>
               <TrackerSearch />
+              {/* The search alone exported every visitor to /tracker without ever
+                  asking for anything. Pairing it with the capture keeps the hook
+                  — it is the exact question cold traffic arrives with — while
+                  putting an email field in the fold. */}
+              <div className="border-t border-slate-200 mx-2" />
+              <div className="px-2 pt-3 pb-2">
+                <p className="font-body text-sm text-slate-600 mb-3">
+                  Or let us watch for you — weekly email, plus alerts near your ZIP.
+                </p>
+                <SubscribeForm compact />
+              </div>
             </div>
           </div>
 
@@ -73,15 +85,6 @@ export default async function HomePage() {
               ))}
             </dl>
           )}
-        </div>
-      </section>
-
-      {/* The ask, before the education layer. Ad traffic is ~90% mobile and
-          bounces early: the only subscribe form used to sit 4.7 screens down,
-          behind everything below, where most visitors never reached it. */}
-      <section className="py-12 bg-paper">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SubscribeCTA counters={counters} />
         </div>
       </section>
 
@@ -193,7 +196,7 @@ export default async function HomePage() {
             Tips from neighbors are how the tracker grows. Every report is reviewed and verified against public records
             before publication — and your identity stays protected.
           </p>
-          <Link href="/report" className="btn-accent">
+          <Link href="/report" className="btn-outline">
             Report a Proposed Data Center
           </Link>
         </div>
