@@ -1,12 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import Turnstile, { TURNSTILE_FAILED_MESSAGE, turnstileEnabled, useTurnstileToken } from "./Turnstile";
+import Turnstile, {
+  TURNSTILE_FAILED_MESSAGE,
+  TURNSTILE_INTERACTION_MESSAGE,
+  turnstileEnabled,
+  useTurnstileToken,
+} from "./Turnstile";
 import { getAttribution } from "@/lib/attribution";
 
 type Status =
   | { kind: "idle" }
-  | { kind: "verifying" }
+  | { kind: "verifying"; message?: string }
   | { kind: "submitting" }
   | { kind: "ok"; message: string }
   | { kind: "error"; message: string };
@@ -36,7 +41,9 @@ export default function SubscribeForm({ compact = false, defaultZip = "" }: { co
     let token: string | null = null;
     if (turnstileEnabled) {
       setStatus({ kind: "verifying" });
-      token = await turnstile.awaitToken();
+      token = await turnstile.awaitToken({
+        onNeedsInteraction: () => setStatus({ kind: "verifying", message: TURNSTILE_INTERACTION_MESSAGE }),
+      });
       if (!token) {
         setStatus({ kind: "error", message: TURNSTILE_FAILED_MESSAGE });
         return;
@@ -174,6 +181,11 @@ export default function SubscribeForm({ compact = false, defaultZip = "" }: { co
         </button>
       )}
 
+      {status.kind === "verifying" && status.message && (
+        <p className="font-body text-sm text-primary" role="status">
+          {status.message}
+        </p>
+      )}
       {status.kind === "error" && (
         <p className="font-body text-sm text-accent-dark" role="alert">
           {status.message}

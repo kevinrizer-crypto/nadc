@@ -23,7 +23,11 @@ const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 export const turnstileEnabled = Boolean(SITE_KEY);
 
 export const TURNSTILE_FAILED_MESSAGE =
-  "We couldn't complete the security check. Please reload the page and try again.";
+  "We couldn't complete the security check. Please complete the \u201cVerify you are human\u201d box, then try again.";
+
+/** Shown once the auto-pass grace elapses and a human clearly has to tick the box. */
+export const TURNSTILE_INTERACTION_MESSAGE =
+  "Almost there \u2014 complete the \u201cVerify you are human\u201d check, and we\u2019ll continue automatically.";
 
 /**
  * Token plumbing shared by every bot-checked form.
@@ -47,17 +51,37 @@ export function useTurnstileToken() {
     errorRef.current = code;
   }, []);
 
-  /** Resolves the token, waiting out the widget. Null means the check failed. */
-  const awaitToken = useCallback(async (timeoutMs = 12_000): Promise<string | null> => {
-    if (!turnstileEnabled) return null;
-    const start = Date.now();
-    while (Date.now() - start < timeoutMs) {
-      if (tokenRef.current) return tokenRef.current;
-      if (errorRef.current) return null;
-      await new Promise((r) => setTimeout(r, 150));
-    }
-    return null;
-  }, []);
+  /**
+   * Resolves the token, waiting out the widget. Null means the check failed.
+   *
+   * Production Turnstile shows an interactive "Verify you are human" checkbox to
+   * a large share of visitors, so this wait has to outlast a human noticing the
+   * widget and tapping it. A short timeout would fail people mid-challenge —
+   * precisely the conversion loss this whole fix exists to stop. Auto-passing
+   * visitors still resolve in well under the grace period, so they see nothing.
+   */
+  const awaitToken = useCallback(
+    async ({
+      graceMs = 2_500,
+      timeoutMs = 120_000,
+      onNeedsInteraction,
+    }: { graceMs?: number; timeoutMs?: number; onNeedsInteraction?: () => void } = {}): Promise<string | null> => {
+      if (!turnstileEnabled) return null;
+      const start = Date.now();
+      let notified = false;
+      while (Date.now() - start < timeoutMs) {
+        if (tokenRef.current) return tokenRef.current;
+        if (errorRef.current) return null;
+        if (!notified && Date.now() - start > graceMs) {
+          notified = true;
+          onNeedsInteraction?.();
+        }
+        await new Promise((r) => setTimeout(r, 150));
+      }
+      return null;
+    },
+    []
+  );
 
   return { onToken, onError, awaitToken };
 }

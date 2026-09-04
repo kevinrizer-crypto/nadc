@@ -1,11 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import Turnstile, { TURNSTILE_FAILED_MESSAGE, turnstileEnabled, useTurnstileToken } from "./Turnstile";
+import Turnstile, {
+  TURNSTILE_FAILED_MESSAGE,
+  TURNSTILE_INTERACTION_MESSAGE,
+  turnstileEnabled,
+  useTurnstileToken,
+} from "./Turnstile";
 
 type Status =
   | { kind: "idle" }
-  | { kind: "verifying" }
+  | { kind: "verifying"; message?: string }
   | { kind: "submitting" }
   | { kind: "ok"; message: string }
   | { kind: "error"; message: string };
@@ -25,7 +30,9 @@ export default function PetitionSignForm({ petitionId }: { petitionId: number })
     let turnstileToken: string | null = null;
     if (turnstileEnabled) {
       setStatus({ kind: "verifying" });
-      turnstileToken = await turnstile.awaitToken();
+      turnstileToken = await turnstile.awaitToken({
+        onNeedsInteraction: () => setStatus({ kind: "verifying", message: TURNSTILE_INTERACTION_MESSAGE }),
+      });
       if (!turnstileToken) {
         setStatus({ kind: "error", message: TURNSTILE_FAILED_MESSAGE });
         return;
@@ -99,6 +106,11 @@ export default function PetitionSignForm({ petitionId }: { petitionId: number })
 
       <Turnstile onToken={turnstile.onToken} onError={turnstile.onError} />
 
+      {status.kind === "verifying" && status.message && (
+        <p className="font-body text-sm text-primary" role="status">
+          {status.message}
+        </p>
+      )}
       {status.kind === "error" && (
         <p className="font-body text-sm text-accent-dark" role="alert">
           {status.message}
