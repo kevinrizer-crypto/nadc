@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import Turnstile, {
   TURNSTILE_FAILED_MESSAGE,
@@ -73,10 +74,20 @@ export default function SubscribeForm({ compact = false, defaultZip = "" }: { co
     }
   }
 
+  // Someone who just said yes is the highest-intent visitor on the site, and
+  // this state used to be a dead end. The donate ask lives here rather than in
+  // more homepage real estate: it competes with nothing and only ever reaches
+  // people who have already converted once.
   if (status.kind === "ok") {
     return (
       <div className="card p-6 border-primary/30 bg-primary/5" role="status">
-        <p className="font-body font-semibold text-primary">{status.message}</p>
+        <p className="font-body font-semibold text-primary mb-3">{status.message}</p>
+        <p className="font-body text-sm text-slate-600 mb-4">
+          One more thing — this research is free because neighbors pay for it. No ads, no industry money.
+        </p>
+        <Link href="/donate" className="btn-accent">
+          Chip in to keep it free
+        </Link>
       </div>
     );
   }

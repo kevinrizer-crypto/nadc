@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getHomeCounters, getPublishedPosts, getPublishedProjects } from "@/lib/queries";
 import { getImpacts } from "@/lib/content";
-import SubscribeForm from "@/components/SubscribeForm";
+import SubscribeCTA from "@/components/SubscribeCTA";
 import TrackerSearch from "@/components/TrackerSearch";
 import StatusBadge from "@/components/StatusBadge";
 import { SITE_TAGLINE } from "@/lib/site";
@@ -73,6 +73,15 @@ export default async function HomePage() {
               ))}
             </dl>
           )}
+        </div>
+      </section>
+
+      {/* The ask, before the education layer. Ad traffic is ~90% mobile and
+          bounces early: the only subscribe form used to sit 4.7 screens down,
+          behind everything below, where most visitors never reached it. */}
+      <section className="py-12 bg-paper">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SubscribeCTA counters={counters} />
         </div>
       </section>
 
@@ -170,13 +179,7 @@ export default async function HomePage() {
                 ))}
               </ul>
             )}
-            <div className="card p-6 mt-6">
-              <h3 className="font-body font-semibold text-ink mb-1">Subscribe to The Grid</h3>
-              <p className="font-body text-sm text-slate-500 mb-4">
-                Weekly national roundup of project filings, hearings, and fight outcomes.
-              </p>
-              <SubscribeForm compact />
-            </div>
+            <SubscribeCTA counters={counters} variant="card" className="mt-6" />
           </div>
         </div>
       </section>

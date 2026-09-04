@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import SubscribeForm from "@/components/SubscribeForm";
 import RedditConversion from "@/components/RedditConversion";
@@ -22,9 +23,15 @@ export default async function SubscribePage({
       {confirm === "ok" && (
         <div className="card border-emerald-300 bg-emerald-50 p-5 mb-8" role="status">
           <p className="font-body font-semibold text-emerald-800">Subscription confirmed — welcome aboard.</p>
-          <p className="font-body text-sm text-emerald-800/80">
+          <p className="font-body text-sm text-emerald-800/80 mb-4">
             You&apos;ll get The Grid weekly, plus any local alerts you opted into.
           </p>
+          <p className="font-body text-sm text-emerald-900/80 mb-4">
+            The tracker is free because neighbors pay for it — no ads, no industry money.
+          </p>
+          <Link href="/donate" className="btn-accent">
+            Chip in to keep it free
+          </Link>
         </div>
       )}
       {confirm === "invalid" && (
