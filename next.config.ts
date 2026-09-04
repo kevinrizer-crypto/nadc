@@ -10,7 +10,11 @@ const csp = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data: blob: https:",
-  "connect-src 'self' https://tiles.openfreemap.org https://api.stripe.com https://*.reddit.com https://www.redditstatic.com",
+  // Turnstile needs connect-src as well as script-src: api.js loads under
+  // script-src, but the challenge itself XHRs back to challenges.cloudflare.com.
+  // Omit it and the widget never renders, so no token is ever issued and every
+  // bot-checked form fails closed.
+  "connect-src 'self' https://tiles.openfreemap.org https://api.stripe.com https://*.reddit.com https://www.redditstatic.com https://challenges.cloudflare.com",
   "worker-src 'self' blob:",
   "frame-src https://js.stripe.com https://checkout.stripe.com https://challenges.cloudflare.com",
   "frame-ancestors 'none'",
