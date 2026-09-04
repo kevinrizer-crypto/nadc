@@ -6,9 +6,20 @@ import { getAttribution } from "@/lib/attribution";
 const MONTHLY_AMOUNTS = [10, 15, 25, 50];
 const ONETIME_AMOUNTS = [25, 50, 100, 250];
 
-export default function DonateForm() {
-  const [recurring, setRecurring] = useState(true); // recurring-first by design
-  const [amount, setAmount] = useState<number>(15);
+/**
+ * `initialAmount` / `initialRecurring` let a specific ask elsewhere on the site
+ * open the form already set to it — a homepage tile promising "$25 keeps the
+ * tracker updated for a month" should not land on a $15/month default.
+ */
+export default function DonateForm({
+  initialAmount,
+  initialRecurring = true,
+}: {
+  initialAmount?: number;
+  initialRecurring?: boolean;
+} = {}) {
+  const [recurring, setRecurring] = useState(initialRecurring); // recurring-first by design
+  const [amount, setAmount] = useState<number>(initialAmount ?? 15);
   const [custom, setCustom] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);

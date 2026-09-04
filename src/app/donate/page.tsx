@@ -8,7 +8,17 @@ export const metadata: Metadata = {
   alternates: { canonical: "/donate" },
 };
 
-export default function DonatePage() {
+export default async function DonatePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ amount?: string; plan?: string }>;
+}) {
+  const { amount, plan } = await searchParams;
+  // Parsed on the server so the form needs no useSearchParams (which would
+  // require its own Suspense boundary to build).
+  const parsed = Number.parseInt(amount ?? "", 10);
+  const initialAmount = Number.isFinite(parsed) && parsed >= 1 && parsed <= 100_000 ? parsed : undefined;
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid lg:grid-cols-5 gap-12">
       <div className="lg:col-span-3">
@@ -19,7 +29,7 @@ export default function DonatePage() {
           for every community that needs it. Monthly support is what lets us plan — and what lets a town that&apos;s
           never heard of us find a fact-checked answer at 11pm the night they learn about a proposal.
         </p>
-        <DonateForm />
+        <DonateForm initialAmount={initialAmount} initialRecurring={plan !== "once"} />
       </div>
 
       <aside className="lg:col-span-2">

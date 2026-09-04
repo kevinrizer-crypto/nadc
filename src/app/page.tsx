@@ -187,6 +187,44 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Donate. Goal order is subscribers then donors, so this sits after the
+          newsletter ask and before the (demoted) report CTA. Donors respond to
+          specificity far more than to urgency: concrete amounts tied to real
+          costs, not "support our mission". */}
+      <section className="py-20 bg-paper">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="section-label">Support the work</p>
+          <h2 className="font-display text-3xl sm:text-4xl text-primary mb-4">
+            This research is free because neighbors pay for it.
+          </h2>
+          <p className="font-body text-base text-slate-500 leading-relaxed mb-8 max-w-2xl">
+            No ads, no industry money. Every project in the tracker was verified against public records — by people
+            this community funds.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-4 mb-8">
+            <Link
+              href="/donate?amount=25&plan=monthly"
+              className="card p-6 hover:border-primary/40 transition-colors group block"
+            >
+              <p className="font-display text-4xl text-primary mb-2 group-hover:text-primary">$25</p>
+              <p className="font-body text-sm text-slate-600">Keeps the tracker updated for a month.</p>
+            </Link>
+            <Link
+              href="/donate?amount=100&plan=once"
+              className="card p-6 hover:border-primary/40 transition-colors group block"
+            >
+              <p className="font-display text-4xl text-primary mb-2">$100</p>
+              <p className="font-body text-sm text-slate-600">
+                Pays for a day of ads reaching neighbors near a proposed site.
+              </p>
+            </Link>
+          </div>
+          <Link href="/donate" className="btn-accent">
+            Become a Neighbor
+          </Link>
+        </div>
+      </section>
+
       {/* Report CTA */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
