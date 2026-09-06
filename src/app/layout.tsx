@@ -3,6 +3,7 @@ import "./globals.css";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, OG_DESCRIPTION } from "@/lib/site";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SiteChrome from "@/components/SiteChrome";
 import RedditPixel from "@/components/RedditPixel";
 import DatamoonScript from "@/components/DatamoonScript";
 
@@ -50,9 +51,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <RedditPixel />
         <DatamoonScript />
-        <Header />
+        <SiteChrome>
+          <Header />
+        </SiteChrome>
         <main id="main">{children}</main>
-        <Footer />
+        <SiteChrome>
+          <Footer />
+        </SiteChrome>
       </body>
     </html>
   );
