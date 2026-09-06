@@ -38,8 +38,8 @@ export default async function HomePage() {
             </p>
             <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl leading-tight mb-6">{SITE_TAGLINE}</h1>
             <p className="font-body text-lg text-white/85 leading-relaxed mb-6 sm:mb-10 max-w-2xl">
-              We track every proposed data center in America — the power draw, the water use, the tax deals, and the
-              public hearings where your voice still matters. Before they break ground, get organized.
+              We track every proposed data center in America — and the public hearings where your voice still
+              matters.
             </p>
 
             <div className="card p-2 sm:p-3 max-w-2xl">
@@ -54,8 +54,15 @@ export default async function HomePage() {
               <div className="border-t border-slate-200 mx-2" />
               <div className="px-2 pt-3 pb-2">
                 <p className="font-body text-sm text-slate-600 mb-3">
-                  Or let us watch for you — weekly email, plus alerts near your ZIP.
+                  Or let us watch for you — weekly email plus local alerts.
                 </p>
+                {counters && (
+                  <p className="font-mono text-2xs uppercase tracking-[0.15em] text-slate-500 mb-3">
+                    {counters.projectsTracked.toLocaleString()} projects tracked
+                    <span aria-hidden="true"> · </span>
+                    {counters.communityWins.toLocaleString()} communities have already won
+                  </p>
+                )}
                 <SubscribeForm compact />
               </div>
             </div>

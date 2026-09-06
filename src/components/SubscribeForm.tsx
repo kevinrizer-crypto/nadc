@@ -93,7 +93,8 @@ export default function SubscribeForm({ compact = false, defaultZip = "" }: { co
   }
 
   const busy = status.kind === "submitting" || status.kind === "verifying";
-  const buttonLabel = status.kind === "verifying" ? "Verifying…" : status.kind === "submitting" ? "Subscribing…" : "Subscribe";
+  const buttonLabel =
+    status.kind === "verifying" ? "Verifying…" : status.kind === "submitting" ? "Subscribing…" : "Get weekly alerts";
 
   return (
     <form onSubmit={submit} className="space-y-3" aria-label="Subscribe to alerts">

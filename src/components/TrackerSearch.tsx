@@ -28,7 +28,10 @@ export default function TrackerSearch() {
           onChange={(e) => setQ(e.target.value)}
         />
       </label>
-      <button type="submit" className="btn-accent whitespace-nowrap">
+      {/* Deliberately btn-outline, not btn-accent: this control navigates away
+          to /tracker. When it was solid red it was the loudest thing in the
+          fold, outranking the subscribe button directly beneath it. */}
+      <button type="submit" className="btn-outline whitespace-nowrap">
         Search
       </button>
     </form>
