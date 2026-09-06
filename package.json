@@ -12,6 +12,7 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "db:seed": "tsx scripts/seed.ts",
     "news:fetch": "tsx scripts/fetch-news.ts",
+    "leads:from-news": "tsx scripts/leads-from-news.ts",
     "assets:generate": "python3 scripts/generate_brand_assets.py"
   },
   "dependencies": {
