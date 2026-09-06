@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { projects, tips, posts, products, petitions } from "@/db/schema";
+import { projects, tips, posts, products, petitions, newsItems } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth";
 
@@ -207,4 +207,35 @@ export async function savePetition(formData: FormData) {
   revalidatePath("/admin/petitions");
   revalidatePath("/act");
   redirect("/admin/petitions");
+}
+
+// --- News coverage ------------------------------------------------------
+
+/**
+ * Approve or reject a queued story. Approving is the ONLY thing that makes an
+ * item publicly visible — the fetcher writes everything as `pending`, so a
+ * broad set of feed queries can never leak onto the site by itself.
+ *
+ * `projectId` optionally attaches the story to a tracked project, which is what
+ * lets independent reporting corroborate a lead (see TRACKER_SCALE_PLAN.md).
+ */
+export async function setNewsStatus(formData: FormData) {
+  await requireAdmin();
+  const id = Number(formData.get("id"));
+  const status = String(formData.get("status")) as "pending" | "approved" | "rejected";
+  const rawProject = formData.get("projectId");
+  const projectId = rawProject && String(rawProject) !== "" ? Number(rawProject) : null;
+
+  await db
+    .update(newsItems)
+    .set({
+      status,
+      ...(rawProject !== null ? { projectId } : {}),
+      reviewedAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .where(eq(newsItems.id, id));
+
+  revalidatePath("/admin/news");
+  revalidatePath("/news");
 }

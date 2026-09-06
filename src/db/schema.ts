@@ -340,3 +340,38 @@ export const rateLimits = pgTable(
   },
   (t) => [uniqueIndex("rate_limits_bucket_idx").on(t.bucket, t.windowStart)]
 );
+
+// ---------------------------------------------------------------------------
+// External news coverage
+// ---------------------------------------------------------------------------
+
+// Curated links to third-party reporting. Unlike tracker listings — which scale
+// on source authority — every news item IS reviewed by a human before it shows
+// publicly, so discovery can be broad and the approval step is the guard.
+export const newsItemStatus = pgEnum("news_item_status", ["pending", "approved", "rejected"]);
+
+export const newsItems = pgTable(
+  "news_items",
+  {
+    id: serial("id").primaryKey(),
+    // Unique: the URL is the hard identifier that makes ingestion idempotent,
+    // so re-running the fetcher never creates duplicates.
+    url: text("url").notNull().unique(),
+    title: text("title").notNull(),
+    publisher: varchar("publisher", { length: 160 }),
+    summary: text("summary"),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    state: varchar("state", { length: 2 }),
+    // Attaching coverage to a tracked project is what turns this queue into the
+    // promotion engine described in TRACKER_SCALE_PLAN.md: a lead plus
+    // independent reporting is a corroborated project.
+    projectId: integer("project_id").references(() => projects.id, { onDelete: "set null" }),
+    status: newsItemStatus("status").notNull().default("pending"),
+    discoveredVia: varchar("discovered_via", { length: 120 }).notNull().default("manual"),
+    adminNotes: text("admin_notes"),
+    reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("news_items_status_idx").on(t.status, t.publishedAt)]
+);

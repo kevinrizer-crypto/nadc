@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { projects, petitions, petitionSignatures, posts, subscribers, products } from "@/db/schema";
+import { projects, petitions, petitionSignatures, posts, subscribers, products, newsItems } from "@/db/schema";
 import { and, eq, desc, sql, count } from "drizzle-orm";
 
 /**
@@ -90,4 +90,18 @@ export async function getActiveProducts() {
 export async function getProductBySlug(slug: string) {
   const rows = await db.select().from(products).where(and(eq(products.active, true), eq(products.slug, slug))).limit(1);
   return rows[0] ?? null;
+}
+
+/**
+ * Approved external coverage. Only ever returns `approved` rows — the fetcher
+ * writes everything as `pending`, so nothing reaches the public site without a
+ * human having said yes in /admin/news.
+ */
+export async function getApprovedNews(limit = 12) {
+  return db
+    .select()
+    .from(newsItems)
+    .where(eq(newsItems.status, "approved"))
+    .orderBy(desc(newsItems.publishedAt), desc(newsItems.id))
+    .limit(limit);
 }

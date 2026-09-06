@@ -1,0 +1,43 @@
+{
+  "_comment": [
+    "Feeds scanned by scripts/fetch-news.ts. Everything found lands in the",
+    "news_items queue as 'pending' and is invisible publicly until a human",
+    "approves it in /admin/news — so these are discovery aids, not sources of",
+    "truth. Broad queries are fine; the approval step is the guard.",
+    "",
+    "Add any publisher's own RSS feed here too. 'label' is stored on each row as",
+    "discovered_via, so you can tell which query surfaced a story and prune the",
+    "queries that only produce noise.",
+    "",
+    "KNOWN LIMITATION: Google News RSS returns news.google.com redirect URLs,",
+    "not the publisher's own address, so those links reach the story via Google.",
+    "A publisher's direct RSS feed yields a clean URL and is preferable wherever",
+    "one exists — add the outlets that matter most to your coverage area here."
+  ],
+  "feeds": [
+    {
+      "label": "gnews:rezoning",
+      "url": "https://news.google.com/rss/search?q=%22data+center%22+rezoning&hl=en-US&gl=US&ceid=US:en"
+    },
+    {
+      "label": "gnews:hearing",
+      "url": "https://news.google.com/rss/search?q=%22data+center%22+%22public+hearing%22&hl=en-US&gl=US&ceid=US:en"
+    },
+    {
+      "label": "gnews:moratorium",
+      "url": "https://news.google.com/rss/search?q=%22data+center%22+moratorium&hl=en-US&gl=US&ceid=US:en"
+    },
+    {
+      "label": "gnews:opposition",
+      "url": "https://news.google.com/rss/search?q=%22data+center%22+residents+oppose&hl=en-US&gl=US&ceid=US:en"
+    },
+    {
+      "label": "gnews:water",
+      "url": "https://news.google.com/rss/search?q=%22data+center%22+water+use+county&hl=en-US&gl=US&ceid=US:en"
+    },
+    {
+      "label": "gnews:tax-abatement",
+      "url": "https://news.google.com/rss/search?q=%22data+center%22+tax+abatement&hl=en-US&gl=US&ceid=US:en"
+    }
+  ]
+}

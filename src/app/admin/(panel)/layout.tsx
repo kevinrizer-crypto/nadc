@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 const NAV = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/tips", label: "Tips" },
+  { href: "/admin/news", label: "News" },
   { href: "/admin/projects", label: "Projects" },
   { href: "/admin/posts", label: "Posts" },
   { href: "/admin/products", label: "Products" },
