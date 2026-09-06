@@ -19,6 +19,7 @@
  *   news, satellite analysis), which meets the 2+-sources bar.
  * - Re-runnable: subsequent runs update Epoch-managed fields only.
  */
+import "./load-env";
 import { Pool } from "pg";
 import { writeFileSync } from "node:fs";
 

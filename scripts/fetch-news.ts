@@ -12,6 +12,7 @@
  * after a human approves them in /admin/news, which is why the feed queries can
  * afford to be broad.
  */
+import "./load-env";
 import { readFileSync } from "node:fs";
 import { db } from "../src/db";
 import { newsItems } from "../src/db/schema";
@@ -95,7 +96,15 @@ function parseFeed(xml: string, feed: Feed): Item[] {
 
 async function main() {
   const commit = process.argv.includes("--commit");
-  if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is not set");
+  if (!process.env.DATABASE_URL) {
+    throw new Error(
+      "DATABASE_URL is not set.\n" +
+        "  Pull your Vercel environment into .env.local, then re-run:\n" +
+        "    vercel env pull .env.local\n" +
+        "  Or point at a database for one run:\n" +
+        "    DATABASE_URL=postgres://… npm run news:fetch -- --commit"
+    );
+  }
 
   const config = JSON.parse(readFileSync(new URL("../content/news-feeds.json", import.meta.url), "utf8"));
   const feeds: Feed[] = config.feeds ?? [];

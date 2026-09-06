@@ -20,6 +20,7 @@
  * Honesty contract: web search returns real, cited results; we additionally
  * HEAD/GET-check each URL. Nothing publishes on an unverifiable source.
  */
+import "./load-env";
 import Anthropic from "@anthropic-ai/sdk";
 import { Pool } from "pg";
 import { readFileSync } from "node:fs";

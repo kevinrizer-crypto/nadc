@@ -11,6 +11,7 @@
  * compile date as verified_at. Statuses change month to month — re-verify in
  * the admin panel before relying on any entry for organizing decisions.
  */
+import "./load-env";
 import { Pool } from "pg";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";

@@ -4,6 +4,7 @@
  *
  *   DATABASE_URL=postgres://... npm run db:migrate
  */
+import "./load-env";
 import { Pool } from "pg";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";

@@ -42,7 +42,17 @@ npm run db:migrate                   # applies drizzle/*.sql, tracked in _migrat
 SEED_ADMIN_EMAIL=you@example.org npm run db:seed   # 30 verified projects + store catalog + first admin
 
 npm run dev                          # http://localhost:3000
+
+# news monitor — queues stories for review at /admin/news, nothing goes public
+# until approved. Dry run by default.
+npm run news:fetch                   # preview what it finds
+npm run news:fetch -- --commit       # actually queue them
 ```
+
+Scripts read `.env.local` (then `.env`) automatically, so `DATABASE_URL` only
+needs to live in that file. A variable exported in the shell still wins, which
+is how you point a single run at a different database. If you deploy on Vercel,
+`vercel env pull .env.local` fills the file from your project settings.
 
 Without optional credentials, the relevant features return clear "not live yet"
 messages: subscriptions/admin-login need `RESEND_API_KEY`; donations/store need
