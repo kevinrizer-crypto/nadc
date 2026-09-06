@@ -131,11 +131,6 @@ export default function SubscribeForm({ compact = false, defaultZip = "" }: { co
             autoComplete="postal-code"
           />
         </label>
-        {compact && (
-          <button type="submit" className="btn-primary whitespace-nowrap" disabled={busy}>
-            {buttonLabel}
-          </button>
-        )}
       </div>
 
       {!compact && (
@@ -182,15 +177,17 @@ export default function SubscribeForm({ compact = false, defaultZip = "" }: { co
       )}
 
       {/* The bot check must render for BOTH variants — the server rejects any
-          submission without a token, compact or not. In compact mode it is
-          interaction-only, so it stays invisible unless a challenge is needed. */}
+          submission without a token.
+          ORDER MATTERS: this sits ABOVE the submit button. It used to render
+          after it in compact mode, which put the "Verify you are human"
+          checkbox below the button and below the fold — visitors tapped
+          Subscribe and never saw the challenge they had to complete. Zero of
+          ~450 ad clicks submitted the form while it was laid out that way. */}
       <Turnstile onToken={turnstile.onToken} onError={turnstile.onError} compact={compact} />
 
-      {!compact && (
-        <button type="submit" className="btn-primary" disabled={busy}>
-          {buttonLabel}
-        </button>
-      )}
+      <button type="submit" className="btn-primary w-full sm:w-auto" disabled={busy}>
+        {buttonLabel}
+      </button>
 
       {status.kind === "verifying" && status.message && (
         <p className="font-body text-sm text-primary" role="status">
