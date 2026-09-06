@@ -21,7 +21,14 @@ export default function Header() {
               <br />
               DATA CENTERS
             </span>
-            <span className="font-body font-bold text-ink text-sm sm:hidden">NADC</span>
+            {/* Mobile previously showed only "NADC", so the org name appeared
+                nowhere above the footer. Cold ad traffic has no idea what the
+                acronym stands for. */}
+            <span className="font-body font-bold text-ink text-[10px] leading-[1.15] tracking-tight sm:hidden">
+              NEIGHBORS AGAINST
+              <br />
+              DATA CENTERS
+            </span>
           </Link>
 
           <nav aria-label="Main" className="hidden lg:flex items-center gap-6">

@@ -34,12 +34,12 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 lg:py-28">
           <div className="max-w-3xl">
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-white/70 mb-4">
-              Before they break ground, get organized
+              Neighbors Against Data Centers
             </p>
             <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl leading-tight mb-6">{SITE_TAGLINE}</h1>
             <p className="font-body text-lg text-white/85 leading-relaxed mb-6 sm:mb-10 max-w-2xl">
-              NADC tracks every proposed data center in America — the power draw, the water use, the tax deals, and the
-              public hearings where your voice still matters.
+              We track every proposed data center in America — the power draw, the water use, the tax deals, and the
+              public hearings where your voice still matters. Before they break ground, get organized.
             </p>
 
             <div className="card p-2 sm:p-3 max-w-2xl">
