@@ -84,7 +84,10 @@ export default async function AdminNewsPage({
               </a>
               {item.summary && <p className="font-body text-sm text-slate-500 mb-3">{item.summary.slice(0, 240)}</p>}
 
-              <form action={setNewsStatus} className="flex flex-wrap items-center gap-2">
+              {/* No action on the form itself: each button binds its own status,
+                  so the value can never arrive missing. There is no text input
+                  here, so there is no implicit Enter-to-submit path. */}
+              <form className="flex flex-wrap items-center gap-2">
                 <input type="hidden" name="id" value={item.id} />
                 <label className="flex items-center gap-2">
                   <span className="font-body text-xs text-slate-500">Attach to project</span>
@@ -98,17 +101,17 @@ export default async function AdminNewsPage({
                   </select>
                 </label>
                 {filter !== "approved" && (
-                  <button type="submit" name="status" value="approved" className="btn-primary py-1.5 px-4 text-sm">
+                  <button type="submit" formAction={setNewsStatus.bind(null, "approved")} className="btn-primary py-1.5 px-4 text-sm">
                     Approve
                   </button>
                 )}
                 {filter !== "rejected" && (
-                  <button type="submit" name="status" value="rejected" className="btn-outline py-1.5 px-4 text-sm">
+                  <button type="submit" formAction={setNewsStatus.bind(null, "rejected")} className="btn-outline py-1.5 px-4 text-sm">
                     Reject
                   </button>
                 )}
                 {filter !== "pending" && (
-                  <button type="submit" name="status" value="pending" className="btn-outline py-1.5 px-4 text-sm">
+                  <button type="submit" formAction={setNewsStatus.bind(null, "pending")} className="btn-outline py-1.5 px-4 text-sm">
                     Back to pending
                   </button>
                 )}

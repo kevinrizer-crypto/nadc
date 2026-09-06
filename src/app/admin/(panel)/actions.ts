@@ -219,21 +219,27 @@ export async function savePetition(formData: FormData) {
  * `projectId` optionally attaches the story to a tracked project, which is what
  * lets independent reporting corroborate a lead (see TRACKER_SCALE_PLAN.md).
  */
-export async function setNewsStatus(formData: FormData) {
+export async function setNewsStatus(
+  // Bound via .bind() at the call site rather than read from the form. A
+  // submit button's name/value is NOT serialised into a server action's
+  // FormData, so reading it here produced the string "null" and Postgres
+  // rejected it: invalid input value for enum news_item_status: "null".
+  // As a bound argument the value cannot go missing.
+  status: "pending" | "approved" | "rejected",
+  formData: FormData
+) {
   await requireAdmin();
   const id = Number(formData.get("id"));
-  const status = String(formData.get("status")) as "pending" | "approved" | "rejected";
+  if (!Number.isInteger(id)) return;
+  // Defensive: never hand an unexpected value to the enum column.
+  if (status !== "pending" && status !== "approved" && status !== "rejected") return;
+
   const rawProject = formData.get("projectId");
   const projectId = rawProject && String(rawProject) !== "" ? Number(rawProject) : null;
 
   await db
     .update(newsItems)
-    .set({
-      status,
-      ...(rawProject !== null ? { projectId } : {}),
-      reviewedAt: new Date(),
-      updatedAt: new Date(),
-    })
+    .set({ status, projectId, reviewedAt: new Date(), updatedAt: new Date() })
     .where(eq(newsItems.id, id));
 
   revalidatePath("/admin/news");
