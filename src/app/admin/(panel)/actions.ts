@@ -179,7 +179,13 @@ export async function saveProduct(formData: FormData) {
     .set({
       priceCents: Math.round(parseFloat(String(formData.get("price") ?? "0")) * 100),
       active: formData.get("active") === "on",
-      podProductId: String(formData.get("podProductId") ?? "").trim() || null,
+      // Only touched when the form actually submits it. The products form has
+      // no podProductId input, so reading it unconditionally set the column to
+      // null on every save — silently wiping the legacy Printful fallback that
+      // the Stripe webhook falls back to when podVariantMap misses an item.
+      ...(formData.get("podProductId") !== null
+        ? { podProductId: String(formData.get("podProductId")).trim() || null }
+        : {}),
       podVariantMap,
     })
     .where(eq(products.id, id));
