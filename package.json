@@ -13,6 +13,7 @@
     "db:seed": "tsx scripts/seed.ts",
     "news:fetch": "tsx scripts/fetch-news.ts",
     "leads:from-news": "tsx scripts/leads-from-news.ts",
+    "import:compute-atlas": "tsx scripts/import-compute-atlas.ts",
     "assets:generate": "python3 scripts/generate_brand_assets.py"
   },
   "dependencies": {

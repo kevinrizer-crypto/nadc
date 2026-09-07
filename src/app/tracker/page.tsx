@@ -57,6 +57,26 @@ export default async function TrackerPage() {
           <TrackerExplorer projects={projects.map(toClientProject)} />
         </Suspense>
       )}
+
+      {/* CC BY 4.0 requires attribution for both bulk datasets we import. Each
+          entry also credits its source individually, but the licences are on
+          the datasets as wholes, so they are named here too. */}
+      <p className="font-body text-xs text-slate-400 mt-10 leading-relaxed">
+        Tracker entries are compiled from public records and local reporting, and each listing cites its own sources.
+        Bulk data is drawn in part from{" "}
+        <a href="https://epoch.ai/data/data-centers" className="underline hover:text-primary" rel="noopener" target="_blank">
+          Epoch AI, Frontier Data Centers
+        </a>{" "}
+        and{" "}
+        <a href="https://www.compute-atlas.com/" className="underline hover:text-primary" rel="noopener" target="_blank">
+          Compute Atlas
+        </a>
+        , both used under{" "}
+        <a href="https://creativecommons.org/licenses/by/4.0/" className="underline hover:text-primary" rel="noopener" target="_blank">
+          CC BY 4.0
+        </a>
+        . Imported entries are labelled &ldquo;corroborated&rdquo; and have not been independently re-verified by NADC.
+      </p>
     </div>
   );
 }
