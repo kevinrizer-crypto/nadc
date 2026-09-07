@@ -66,6 +66,25 @@ function extractPlace(title: string): string | null {
   return null;
 }
 
+/**
+ * Ranks candidates so `verify-leads --limit N` spends on the most promising
+ * ones first. Observed in the first run: headlines naming a specific action on
+ * a site (rezoning, an open house, a lawsuit over approvals) verified, while
+ * bare moratorium stories were rejected as exists=false — a moratorium names a
+ * jurisdiction, not a project. Nothing is discarded; weak leads just sort last.
+ */
+const STRONG = /\b(rezon\w*|proposed?|proposal|plans?|planned|construction|campus|permit\w*|annexation|open house|breaks? ground|special use|conditional use)\b/i;
+const MEDIUM = /\b(hearing|approv\w*|deni\w*|reject\w*|lawsuit|sue[sd]?|zoning)\b/i;
+const POLICY_ONLY = /\b(moratorium|moratoria|temporary ban)\b/i;
+
+function score(hint: string): number {
+  let n = 0;
+  if (STRONG.test(hint)) n += 2;
+  if (MEDIUM.test(hint)) n += 1;
+  if (POLICY_ONLY.test(hint) && !STRONG.test(hint)) n -= 2;
+  return n;
+}
+
 function csvCell(s: string): string {
   return `"${s.replace(/"/g, '""')}"`;
 }
@@ -111,6 +130,8 @@ async function main() {
     });
   }
 
+  leads.sort((a, b) => score(b.hint) - score(a.hint));
+
   console.log(
     `${rows.length} news items → ${leads.length} candidate leads ` +
       `(${filtered} filtered as policy/opinion, ${noPlace} had no extractable place).`
@@ -126,7 +147,8 @@ async function main() {
   const path = join(process.cwd(), "content", "leads.csv");
   const csv = ["name,city,state,hint", ...leads.map((l) => `${csvCell(l.name)},,,${csvCell(l.hint)}`)].join("\n");
   writeFileSync(path, `${csv}\n`, "utf8");
-  console.log(`\nWrote ${leads.length} leads to content/leads.csv.`);
+  const strong = leads.filter((l) => score(l.hint) >= 2).length;
+  console.log(`\nWrote ${leads.length} leads to content/leads.csv, best candidates first (${strong} strong).`);
   console.log("Next (costs Anthropic credits — start small):");
   console.log("  ANTHROPIC_API_KEY=… npx tsx scripts/verify-leads.ts --limit 5");
 }
