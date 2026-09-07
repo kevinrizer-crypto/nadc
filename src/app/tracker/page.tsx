@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { getPublishedProjects } from "@/lib/queries";
 import TrackerExplorer from "@/components/TrackerExplorer";
 
@@ -54,17 +53,10 @@ export default async function TrackerPage() {
           </p>
         </div>
       ) : (
-        // Suspense is required because TrackerExplorer reads URL search params
-        // (?q=, ?state=) — without it, prerendering this page fails.
-        <Suspense
-          fallback={
-            <div className="h-[420px] card flex items-center justify-center" role="status">
-              <p className="font-mono text-xs text-slate-400">Loading tracker…</p>
-            </div>
-          }
-        >
-          <TrackerExplorer projects={projects.map(toClientProject)} />
-        </Suspense>
+        // No Suspense boundary needed: TrackerExplorer reads the URL in an
+        // effect rather than via useSearchParams, so nothing here bails out of
+        // static rendering and the page hydrates the server HTML as-is.
+        <TrackerExplorer projects={projects.map(toClientProject)} />
       )}
 
       {/* CC BY 4.0 requires attribution for both bulk datasets we import. Each

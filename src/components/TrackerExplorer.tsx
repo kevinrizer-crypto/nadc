@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import StatusBadge from "./StatusBadge";
 import TierBadge from "./TierBadge";
@@ -14,32 +13,51 @@ import type { ClientProject } from "@/app/tracker/page";
 const PAGE_SIZE = 50;
 
 export default function TrackerExplorer({ projects }: { projects: ClientProject[] }) {
-  const params = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const [q, setQ] = useState(params.get("q") ?? "");
-  const [state, setState] = useState(params.get("state") ?? "");
-  const [status, setStatus] = useState(params.get("status") ?? "");
-  const [tier, setTier] = useState(params.get("tier") ?? "");
+  // Filters start empty and are populated from the URL after mount, rather than
+  // read during render with useSearchParams(). That hook forces a statically
+  // prerendered page to bail out to client rendering, so the server shipped the
+  // Suspense fallback while the client rendered real content — React logged
+  // that as hydration error #418 and threw away the server HTML for this whole
+  // subtree. Reading the URL in an effect keeps server and client's first
+  // render identical, so the page hydrates instead of re-rendering.
+  const [q, setQ] = useState("");
+  const [state, setState] = useState("");
+  const [status, setStatus] = useState("");
+  const [tier, setTier] = useState("");
   const [view, setView] = useState<"map" | "table">("map");
   const [shown, setShown] = useState(PAGE_SIZE);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [urlApplied, setUrlApplied] = useState(false);
+
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    setQ(p.get("q") ?? "");
+    setState(p.get("state") ?? "");
+    setStatus(p.get("status") ?? "");
+    setTier(p.get("tier") ?? "");
+    setUrlApplied(true);
+  }, []);
 
   const activeFilters = [state, status, tier].filter(Boolean).length;
 
   // Mirror filters into the URL so a filtered view can be linked or shared.
-  // replace(), not push(), so filtering doesn't fill the back button.
+  // history.replaceState rather than router.replace: this is a display-only URL
+  // update, and it avoids re-introducing a router hook that would undo the
+  // static rendering above. Waits until the URL has been read, so the initial
+  // effect cannot immediately overwrite an incoming ?state=TX with "".
   useEffect(() => {
+    if (!urlApplied) return;
     const next = new URLSearchParams();
     if (q.trim()) next.set("q", q.trim());
     if (state) next.set("state", state);
     if (status) next.set("status", status);
     if (tier) next.set("tier", tier);
     const qs = next.toString();
-    const t = setTimeout(() => router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false }), 300);
+    const t = setTimeout(() => {
+      window.history.replaceState(null, "", qs ? `${window.location.pathname}?${qs}` : window.location.pathname);
+    }, 300);
     return () => clearTimeout(t);
-  }, [q, state, status, tier, pathname, router]);
+  }, [q, state, status, tier, urlApplied]);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
