@@ -22,7 +22,10 @@ const csp = [
   // bot-checked form fails closed.
   "connect-src 'self' https://tiles.openfreemap.org https://api.stripe.com https://*.reddit.com https://www.redditstatic.com https://challenges.cloudflare.com https://cloudflareinsights.com https://app.datamoon.com https://*.liadm.com",
   "worker-src 'self' blob:",
-  "frame-src https://js.stripe.com https://checkout.stripe.com https://challenges.cloudflare.com",
+  // LiveIntent's identity sync runs in an iframe, so allowlisting it for
+  // script-src and connect-src alone left it blocked — the same both-directives
+  // trap that hid the Turnstile and analytics failures.
+  "frame-src https://js.stripe.com https://checkout.stripe.com https://challenges.cloudflare.com https://*.liadm.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self' https://checkout.stripe.com",
