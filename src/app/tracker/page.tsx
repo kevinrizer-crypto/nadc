@@ -26,10 +26,19 @@ export default async function TrackerPage() {
       <div className="max-w-2xl mb-10">
         <p className="section-label">Research</p>
         <h1 className="font-display text-4xl sm:text-5xl text-primary mb-4">Data Center Tracker</h1>
+        {/* This used to say every entry was verified by NADC staff. That stopped
+            being true once bulk datasets were imported, so it now describes the
+            confidence labels instead of overclaiming. */}
         <p className="font-body text-base text-slate-500 leading-relaxed">
-          Every entry is verified against public records and carries its sources. Maintained by NADC staff and grown by
-          tips from neighbors — statuses change month to month, so check the &ldquo;last verified&rdquo; date before
-          relying on an entry.
+          Every entry cites its sources and carries a confidence label.{" "}
+          <strong className="text-slate-600">Verified</strong> means we confirmed it against public records ourselves.{" "}
+          <strong className="text-slate-600">Corroborated</strong> means two or more independent sources agree, but we
+          have not re-checked it. Statuses change month to month — follow an entry&apos;s sources before relying on it,
+          and{" "}
+          <a href="/report" className="text-primary underline">
+            tell us
+          </a>{" "}
+          if something is wrong.
         </p>
       </div>
 
